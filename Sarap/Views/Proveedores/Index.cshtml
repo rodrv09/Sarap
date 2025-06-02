@@ -1,0 +1,190 @@
+﻿@model IEnumerable<Sarap.Models.Proveedore>
+
+<h2 class="mb-4 text-dark">Registro de Proveedores</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+<div class="mb-3">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProveedorModal">
+        <i class="fas fa-plus"></i> Agregar Proveedor
+    </button>
+</div>
+
+<div class="card shadow-sm" style="background: white;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover w-100 mb-0">
+                <thead style="background-color: #2f3e4e; color: white;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Empresa</th>
+                        <th>Contacto Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Fecha Registro</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var proveedor in Model)
+                        {
+                            <tr>
+                                <td>@proveedor.ProveedorId</td>
+                                <td>@proveedor.NombreEmpresa</td>
+                                <td>@proveedor.ContactoNombre</td>
+                                <td>@proveedor.Telefono</td>
+                                <td>@proveedor.Email</td>
+                                <td>@proveedor.Direccion</td>
+                                <td>@proveedor.FechaRegistro?.ToString("yyyy-MM-dd")</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-warning me-1 btnEditarProveedor"
+                                            data-proveedor='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(proveedor))'>
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Eliminar", "Proveedores", new { id = proveedor.ProveedorId })">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No hay proveedores registrados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="agregarProveedorModal" tabindex="-1" aria-labelledby="agregarProveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Crear" asp-controller="Proveedores" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarProveedorModalLabel">Agregar Proveedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="NombreEmpresaCrear" class="form-label">Nombre Empresa</label>
+                        <input type="text" class="form-control" id="NombreEmpresaCrear" name="NombreEmpresa" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="ContactoNombreCrear" class="form-label">Nombre Contacto</label>
+                        <input type="text" class="form-control" id="ContactoNombreCrear" name="ContactoNombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="TelefonoCrear" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="TelefonoCrear" name="Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="EmailCrear" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="EmailCrear" name="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="DireccionCrear" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="DireccionCrear" name="Direccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FechaRegistroCrear" class="form-label">Fecha de Registro</label>
+                        <input type="date" class="form-control" id="FechaRegistroCrear" name="FechaRegistro" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarProveedorModal" tabindex="-1" aria-labelledby="editarProveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Editar" asp-controller="Proveedores" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarProveedorModalLabel">Editar Proveedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="ProveedorId" name="ProveedorId" />
+
+                    <div class="mb-3">
+                        <label for="NombreEmpresa" class="form-label">Nombre Empresa</label>
+                        <input type="text" class="form-control" id="NombreEmpresa" name="NombreEmpresa" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="ContactoNombre" class="form-label">Nombre Contacto</label>
+                        <input type="text" class="form-control" id="ContactoNombre" name="ContactoNombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="Telefono" name="Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="Direccion" name="Direccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FechaRegistro" class="form-label">Fecha de Registro</label>
+                        <input type="date" class="form-control" id="FechaRegistro" name="FechaRegistro" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalEditar = new bootstrap.Modal(document.getElementById('editarProveedorModal'));
+
+            document.querySelectorAll('.btnEditarProveedor').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const proveedor = JSON.parse(this.getAttribute('data-proveedor'));
+
+                    document.getElementById('ProveedorId').value = proveedor.ProveedorId;
+                    document.getElementById('NombreEmpresa').value = proveedor.NombreEmpresa;
+                    document.getElementById('ContactoNombre').value = proveedor.ContactoNombre;
+                    document.getElementById('Telefono').value = proveedor.Telefono ?? '';
+                    document.getElementById('Email').value = proveedor.Email ?? '';
+                    document.getElementById('Direccion').value = proveedor.Direccion ?? '';
+                    document.getElementById('FechaRegistro').value = proveedor.FechaRegistro ? proveedor.FechaRegistro.split('T')[0] : '';
+
+                    modalEditar.show();
+                });
+            });
+        });
+    </script>
+}

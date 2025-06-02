@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Proveedores";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-dark">Gestión de Proveedores</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover mb-0">
+            <thead style="background-color: #2f3e4e; color: white;">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Identidad</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white">
+                <tr>
+                    <td>1</td>
+                    <td>Proveedor ABC</td>
+                    <td>0702-1990-54321</td>
+                    <td>abc@correo.com</td>
+                    <td>2233-4455</td>
+                    <td>San Pedro Sula</td>
+                    <td class="text-center">
+                        <a class="btn btn-sm btn-outline-warning me-1" href="#">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a class="btn btn-sm btn-outline-danger" href="#">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

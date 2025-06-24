@@ -89,7 +89,7 @@ public partial class EspeciasSarapiquiContext : DbContext
         });
         modelBuilder.Entity<Empleado>(entity =>
         {
-            entity.ToTable("Empleado"); // 👈 AGREGA ESTA LÍNEA
+            entity.ToTable("Empleado");
 
             entity.HasKey(e => e.EmpleadoId).HasName("PK_Empleado");
 
@@ -144,7 +144,7 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .HasColumnType("decimal(10, 2)");
 
             entity.Property(e => e.FechaRegistro)
-                .HasDefaultValueSql("(getdate())")  // Ahora EF sabe que en la BD la fecha es por defecto GETDATE()
+                .HasDefaultValueSql("(getdate())")  
                 .HasColumnType("datetime");
         });
 

@@ -12,8 +12,8 @@ using Sarap.Models;
 namespace Sarap.Migrations
 {
     [DbContext(typeof(EspeciasSarapiquiContext))]
-    [Migration("20250624144055_AgregarActivoEmpleado")]
-    partial class AgregarActivoEmpleado
+    [Migration("20250624150508_NombreMigracion")]
+    partial class NombreMigracion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,7 +126,7 @@ namespace Sarap.Migrations
                     b.HasKey("EmpleadoId")
                         .HasName("PK_Empleado");
 
-                    b.ToTable("Empleados");
+                    b.ToTable("Empleado", (string)null);
                 });
 
             modelBuilder.Entity("Sarap.Models.Producto", b =>

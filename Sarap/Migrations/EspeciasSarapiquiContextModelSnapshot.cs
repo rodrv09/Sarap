@@ -123,7 +123,7 @@ namespace Sarap.Migrations
                     b.HasKey("EmpleadoId")
                         .HasName("PK_Empleado");
 
-                    b.ToTable("Empleados");
+                    b.ToTable("Empleado", (string)null);
                 });
 
             modelBuilder.Entity("Sarap.Models.Producto", b =>

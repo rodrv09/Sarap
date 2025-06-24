@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repository;
 using Sarap.Models;
-using Sarap.Repository;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sarap.Controllers
 {
     public class UsuariosController : Controller
     {
-        private readonly IUsuarioRepository _repository;
+        private readonly UsuarioRepository _repository;
 
-        public UsuariosController(IUsuarioRepository repository)
+        public UsuariosController()
         {
-            _repository = repository;
+            _repository = new UsuarioRepository();
         }
 
         public async Task<IActionResult> Index()

@@ -1,26 +1,24 @@
-using Sarap.Repository;
-using Sarap.Models;
-using Microsoft.EntityFrameworkCore;
+using Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<EspeciasSarapiquiContext>(options =>
-    options.UseSqlServer(connectionString));
-
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
-builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
+// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<ClienteRepository>();
+builder.Services.AddTransient<ProveedorRepository>();
+builder.Services.AddTransient<UsuarioRepository>();
+builder.Services.AddTransient<EmpleadoRepository>();
+
 
 var app = builder.Build();
 
+// Si usas Program.cs (.NET 6+)
+
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repository;
 using Sarap.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sarap.Controllers
 {
@@ -102,6 +105,9 @@ namespace Sarap.Controllers
             return View(cliente);
         }
 
+        /// <summary>
+        /// Activa un cliente.
+        /// </summary>
         public async Task<IActionResult> Activar(int id)
         {
             var clientes = await _repository.ReadAsync();
@@ -123,6 +129,9 @@ namespace Sarap.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Desactiva un cliente.
+        /// </summary>
         public async Task<IActionResult> Desactivar(int id)
         {
             var clientes = await _repository.ReadAsync();

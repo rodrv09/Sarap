@@ -1,20 +1,15 @@
-﻿using Sarap.Models;
-using Microsoft.EntityFrameworkCore;
+﻿
 
-namespace Sarap.Repository
+using Sarap.Models;
+
+namespace Repository
 {
-    public class ProveedorRepository : IProveedorRepository
+    /// <summary>
+    /// Repositorio especializado para la entidad Producto.
+    /// Hereda de RepositoryBase<Producto> para usar los métodos CRUD genéricos.
+    /// </summary>
+    public class ProductoRepository : RepositoryBase<Producto>
     {
-        private readonly EspeciasSarapiquiContext _context;
-
-        public ProveedorRepository(EspeciasSarapiquiContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IEnumerable<Proveedore>> GetAllAsync()
-        {
-            return await _context.Proveedores.ToListAsync();
-        }
+        public ProductoRepository() : base() { }
     }
 }

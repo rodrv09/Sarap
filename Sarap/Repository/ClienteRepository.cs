@@ -1,20 +1,16 @@
 ﻿using Sarap.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace Sarap.Repository
+namespace Repository
 {
-    public class ClienteRepository : IClienteRepository
+    /// <summary>
+    /// Repositorio especializado para la entidad Cliente.
+    /// Hereda de RepositoryBase<Cliente> para usar los métodos CRUD genéricos.
+    /// </summary>
+    public class ClienteRepository : RepositoryBase<Cliente>
     {
-        private readonly EspeciasSarapiquiContext _context;
+        public ClienteRepository() : base() { }
 
-        public ClienteRepository(EspeciasSarapiquiContext context)
-        {
-            _context = context;
-        }
 
-        public async Task<IEnumerable<Cliente>> GetAllAsync()
-        {
-            return await _context.Clientes.ToListAsync();
-        }
     }
+
 }

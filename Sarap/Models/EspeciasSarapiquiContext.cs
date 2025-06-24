@@ -86,22 +86,24 @@ public partial class EspeciasSarapiquiContext : DbContext
     .HasDefaultValue(true)
     .IsRequired();
 
+
         });
         modelBuilder.Entity<Empleado>(entity =>
         {
-            entity.ToTable("Empleado"); // 👈 AGREGA ESTA LÍNEA
+            entity.ToTable("Empleado");
 
             entity.HasKey(e => e.EmpleadoId).HasName("PK_Empleado");
 
-            entity.Property(e => e.EmpleadoId).HasColumnName("EmpleadoID");
+            entity.Property(e => e.EmpleadoId)
+                .HasColumnName("Id"); // En SQL se llama "Id", no "EmpleadoID"
 
             entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .IsRequired();
 
-            entity.Property(e => e.Apellido)
-                .HasMaxLength(100)
+            entity.Property(e => e.Identidad)
+                .HasMaxLength(50) // Ajusta según tu base de datos
                 .IsUnicode(false)
                 .IsRequired();
 
@@ -117,14 +119,14 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false);
 
-            entity.Property(e => e.FechaIngreso)
+            entity.Property(e => e.FechaContratacion)
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
+                .HasColumnName("FechaContratacion");
 
-            entity.Property(e => e.Activo)
-                .HasDefaultValue(true)
-                .IsRequired();
+            entity.Property(e => e.DiasVacacionesDisponibles)
+                .HasColumnName("DiasVacacionesDisponibles");
         });
+
 
 
 
@@ -144,7 +146,7 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .HasColumnType("decimal(10, 2)");
 
             entity.Property(e => e.FechaRegistro)
-                .HasDefaultValueSql("(getdate())")  // Ahora EF sabe que en la BD la fecha es por defecto GETDATE()
+                .HasDefaultValueSql("(getdate())")  
                 .HasColumnType("datetime");
         });
 

@@ -18,4 +18,6 @@ public partial class Cliente
     public string? Direccion { get; set; }
 
     public DateTime? FechaRegistro { get; set; }
+    public bool Activo { get; set; }
+
 }

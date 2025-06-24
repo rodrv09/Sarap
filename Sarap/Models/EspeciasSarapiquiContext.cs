@@ -23,8 +23,7 @@ public partial class EspeciasSarapiquiContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=VALERIA\\SQLEXPRESS;Database=especias_sarapiqui;Trusted_Connection=True;TrustServerCertificate=True;");
-
+=> optionsBuilder.UseSqlServer("Server=chrstation.database.windows.net;Database=especias_sarapiqui;User ID=chrstation;Password=chrsonic8!;Encrypt=True;TrustServerCertificate=False;");
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cliente>(entity =>
@@ -50,6 +49,9 @@ public partial class EspeciasSarapiquiContext : DbContext
             entity.Property(e => e.Telefono)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.Activo)
+            .HasDefaultValue(true)
+            .IsRequired();
         });
 
         modelBuilder.Entity<Proveedore>(entity =>

@@ -86,6 +86,7 @@ public partial class EspeciasSarapiquiContext : DbContext
     .HasDefaultValue(true)
     .IsRequired();
 
+
         });
         modelBuilder.Entity<Empleado>(entity =>
         {
@@ -93,15 +94,16 @@ public partial class EspeciasSarapiquiContext : DbContext
 
             entity.HasKey(e => e.EmpleadoId).HasName("PK_Empleado");
 
-            entity.Property(e => e.EmpleadoId).HasColumnName("EmpleadoID");
+            entity.Property(e => e.EmpleadoId)
+                .HasColumnName("Id"); // En SQL se llama "Id", no "EmpleadoID"
 
             entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .IsRequired();
 
-            entity.Property(e => e.Apellido)
-                .HasMaxLength(100)
+            entity.Property(e => e.Identidad)
+                .HasMaxLength(50) // Ajusta según tu base de datos
                 .IsUnicode(false)
                 .IsRequired();
 
@@ -117,14 +119,14 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .HasMaxLength(250)
                 .IsUnicode(false);
 
-            entity.Property(e => e.FechaIngreso)
+            entity.Property(e => e.FechaContratacion)
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
+                .HasColumnName("FechaContratacion");
 
-            entity.Property(e => e.Activo)
-                .HasDefaultValue(true)
-                .IsRequired();
+            entity.Property(e => e.DiasVacacionesDisponibles)
+                .HasColumnName("DiasVacacionesDisponibles");
         });
+
 
 
 

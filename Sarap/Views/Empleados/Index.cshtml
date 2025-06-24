@@ -36,12 +36,12 @@
                 <thead style="background-color: #2f3e4e; color: white;">
                     <tr>
                         <th>Nombre</th>
-                        <th>Apellido</th>
+                        <th>Identidad</th>
                         <th>Email</th>
                         <th>Teléfono</th>
                         <th>Dirección</th>
-                        <th>Fecha Ingreso</th>
-                        <th>Estado</th>
+                        <th>Fecha Contratación</th>
+                        <th>Días Vacaciones</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -52,12 +52,19 @@
                         {
                             <tr>
                                 <td>@empleado.Nombre</td>
-                                <td>@empleado.Apellido</td>
+                                <td>@empleado.Identidad</td>
                                 <td>@empleado.Email</td>
                                 <td>@empleado.Telefono</td>
                                 <td>@empleado.Direccion</td>
-                                <td>@empleado.FechaIngreso?.ToString("yyyy-MM-dd")</td>
-                               
+                                <td>@empleado.FechaContratacion.ToString("yyyy-MM-dd")</td>
+                                <td>@empleado.DiasVacacionesDisponibles</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-warning me-1 btnEditarEmpleado"
+                                            data-empleado='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(empleado))'>
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                  
+                                </td>
                             </tr>
                         }
                     }
@@ -88,8 +95,8 @@
                         <input type="text" class="form-control" id="NombreCrear" name="Nombre" required />
                     </div>
                     <div class="mb-3">
-                        <label for="ApellidoCrear" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="ApellidoCrear" name="Apellido" required />
+                        <label for="IdentidadCrear" class="form-label">Identidad</label>
+                        <input type="text" class="form-control" id="IdentidadCrear" name="Identidad" required />
                     </div>
                     <div class="mb-3">
                         <label for="EmailCrear" class="form-label">Email</label>
@@ -104,8 +111,12 @@
                         <input type="text" class="form-control" id="DireccionCrear" name="Direccion" />
                     </div>
                     <div class="mb-3">
-                        <label for="FechaIngresoCrear" class="form-label">Fecha de Ingreso</label>
-                        <input type="date" class="form-control" id="FechaIngresoCrear" name="FechaIngreso" />
+                        <label for="FechaContratacionCrear" class="form-label">Fecha de Contratación</label>
+                        <input type="date" class="form-control" id="FechaContratacionCrear" name="FechaContratacion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="DiasVacacionesCrear" class="form-label">Días Vacaciones Disponibles</label>
+                        <input type="number" class="form-control" id="DiasVacacionesCrear" name="DiasVacacionesDisponibles" min="0" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -134,8 +145,8 @@
                         <input type="text" class="form-control" id="Nombre" name="Nombre" required />
                     </div>
                     <div class="mb-3">
-                        <label for="Apellido" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="Apellido" name="Apellido" required />
+                        <label for="Identidad" class="form-label">Identidad</label>
+                        <input type="text" class="form-control" id="Identidad" name="Identidad" required />
                     </div>
                     <div class="mb-3">
                         <label for="Email" class="form-label">Email</label>
@@ -150,8 +161,12 @@
                         <input type="text" class="form-control" id="Direccion" name="Direccion" />
                     </div>
                     <div class="mb-3">
-                        <label for="FechaIngreso" class="form-label">Fecha de Ingreso</label>
-                        <input type="date" class="form-control" id="FechaIngreso" name="FechaIngreso" />
+                        <label for="FechaContratacion" class="form-label">Fecha de Contratación</label>
+                        <input type="date" class="form-control" id="FechaContratacion" name="FechaContratacion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="DiasVacacionesDisponibles" class="form-label">Días Vacaciones Disponibles</label>
+                        <input type="number" class="form-control" id="DiasVacacionesDisponibles" name="DiasVacacionesDisponibles" min="0" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -174,11 +189,12 @@
 
                     document.getElementById('EmpleadoId').value = empleado.EmpleadoId;
                     document.getElementById('Nombre').value = empleado.Nombre;
-                    document.getElementById('Apellido').value = empleado.Apellido;
+                    document.getElementById('Identidad').value = empleado.Identidad;
                     document.getElementById('Email').value = empleado.Email ?? '';
                     document.getElementById('Telefono').value = empleado.Telefono ?? '';
                     document.getElementById('Direccion').value = empleado.Direccion ?? '';
-                    document.getElementById('FechaIngreso').value = empleado.FechaIngreso ? empleado.FechaIngreso.split('T')[0] : '';
+                    document.getElementById('FechaContratacion').value = empleado.FechaContratacion ? empleado.FechaContratacion.split('T')[0] : '';
+                    document.getElementById('DiasVacacionesDisponibles').value = empleado.DiasVacacionesDisponibles;
 
                     modalEditar.show();
                 });

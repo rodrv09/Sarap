@@ -21,17 +21,21 @@ namespace Sarap.Controllers
             return View(empleados.ToList());
         }
 
-        public IActionResult Crear()
-        {
-            return View();
-        }
+        // Eliminar esta acción si no tienes vista Crear.cshtml
+        // public IActionResult Crear()
+        // {
+        //     return View();
+        // }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Empleado empleado)
         {
             if (!ModelState.IsValid)
-                return View(empleado);
+            {
+                TempData["Error"] = "Por favor corrige los errores del formulario.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var creado = await _repository.CreateAsync(empleado);
             if (creado)
@@ -40,8 +44,8 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError("", "No se pudo crear el empleado.");
-            return View(empleado);
+            TempData["Error"] = "No se pudo crear el empleado.";
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Editar(int id)
@@ -105,9 +109,6 @@ namespace Sarap.Controllers
             return View(empleado);
         }
 
-        /// <summary>
-        /// Activa un empleado.
-        /// </summary>
         public async Task<IActionResult> Activar(int id)
         {
             var empleados = await _repository.ReadAsync();
@@ -123,15 +124,12 @@ namespace Sarap.Controllers
             }
             else
             {
-                TempData["Mensaje"] = "No se pudo activar el empleado.";
+                TempData["Error"] = "No se pudo activar el empleado.";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Desactiva un empleado.
-        /// </summary>
         public async Task<IActionResult> Desactivar(int id)
         {
             var empleados = await _repository.ReadAsync();
@@ -147,7 +145,7 @@ namespace Sarap.Controllers
             }
             else
             {
-                TempData["Mensaje"] = "No se pudo desactivar el empleado.";
+                TempData["Error"] = "No se pudo desactivar el empleado.";
             }
 
             return RedirectToAction(nameof(Index));

@@ -27,7 +27,6 @@ public partial class EspeciasSarapiquiContext : DbContext
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 => optionsBuilder.UseSqlServer("Server=chrstation.database.windows.net;Database=especias_sarapiqui;User ID=chrstation;Password=chrsonic8!;Encrypt=True;TrustServerCertificate=False;");
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -89,41 +88,44 @@ public partial class EspeciasSarapiquiContext : DbContext
         });
         modelBuilder.Entity<Empleado>(entity =>
         {
-            entity.ToTable("Empleado"); // 👈 AGREGA ESTA LÍNEA
+            entity.ToTable("Empleado");
 
-            entity.HasKey(e => e.EmpleadoId).HasName("PK_Empleado");
+            entity.HasKey(e => e.Id).HasName("PK_Empleado");
 
-            entity.Property(e => e.EmpleadoId).HasColumnName("EmpleadoID");
+            entity.Property(e => e.Id).HasColumnName("EmpleadoID");
 
             entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .IsRequired();
+
+            entity.Property(e => e.Apellidos)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .IsRequired();
 
-            entity.Property(e => e.Apellido)
-                .HasMaxLength(100)
+            entity.Property(e => e.Cedula)
+                .HasMaxLength(20)
                 .IsUnicode(false)
                 .IsRequired();
 
             entity.Property(e => e.Email)
-                .HasMaxLength(150)
+                .HasMaxLength(100)
                 .IsUnicode(false);
 
-            entity.Property(e => e.Telefono)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-
-            entity.Property(e => e.Direccion)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-
-            entity.Property(e => e.FechaIngreso)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Rol)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .IsRequired();
 
             entity.Property(e => e.Activo)
                 .HasDefaultValue(true)
                 .IsRequired();
+
+            entity.HasOne(e => e.Usuario)
+             .WithMany()
+             .HasForeignKey(e => e.UsuarioId)
+             .OnDelete(DeleteBehavior.Restrict);
         });
 
 

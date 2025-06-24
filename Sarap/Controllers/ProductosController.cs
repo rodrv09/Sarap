@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Sarap.Models;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Sarap.Controllers
 {

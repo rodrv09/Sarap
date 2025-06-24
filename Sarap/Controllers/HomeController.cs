@@ -1,28 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
-using Repository; // tus repositorios
-using System.Threading.Tasks;
-using System.Linq;
+using Sarap.Repository;
 
 namespace Sarap.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ClienteRepository _clienteRepository;
-        private readonly ProveedorRepository _proveedorRepository;
-        private readonly UsuarioRepository _usuarioRepository;
+        private readonly IClienteRepository _clienteRepository;
+        private readonly IProveedorRepository _proveedorRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public HomeController()
+        public HomeController(
+            IClienteRepository clienteRepository,
+            IProveedorRepository proveedorRepository,
+            IUsuarioRepository usuarioRepository)
         {
-            _clienteRepository = new ClienteRepository();
-            _proveedorRepository = new ProveedorRepository();
-            _usuarioRepository = new UsuarioRepository();
+            _clienteRepository = clienteRepository;
+            _proveedorRepository = proveedorRepository;
+            _usuarioRepository = usuarioRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            var clientes = await _clienteRepository.ReadAsync();
-            var proveedores = await _proveedorRepository.ReadAsync();
-            var usuarios = await _usuarioRepository.ReadAsync();
+            var clientes = await _clienteRepository.GetAllAsync();
+            var proveedores = await _proveedorRepository.GetAllAsync();
+            var usuarios = await _usuarioRepository.GetAllAsync();
 
             ViewBag.TotalClientes = clientes.Count();
             ViewBag.TotalProveedores = proveedores.Count();

@@ -1,0 +1,22 @@
+﻿@model Empleado
+
+@{
+    ViewData["Title"] = "Editar Empleado";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <!-- Resto del formulario igual que Create.cshtml -->
+        <!-- ... -->
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -34,6 +34,7 @@ public class PAWException : Exception
 
     public PAWException()
     {
+        exception = new Exception();
     }
 
     /// <summary>

@@ -22,4 +22,6 @@ public partial class Usuario
     public DateTime? FechaCreacion { get; set; }
 
     public string Rol { get; set; } = null!;
+    public bool Activo { get; set; }
+
 }

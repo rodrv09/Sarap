@@ -22,58 +22,89 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
 }
+<div class="mb-3">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarClienteModal">
+        <i class="fas fa-plus"></i> Agregar Usuario
+    </button>
+</div>
+
 <div class="card shadow-sm" style="background: white;">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-bordered table-hover w-100 mb-0">
+                <thead style="background-color: #2f3e4e; color: white;">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var usuario in Model)
+                        {
+                            <tr>
+                                <td>@usuario.Nombre</td>
+                                <td>@usuario.Apellido</td>
+                                <td>@usuario.Email</td>
+                                <td>@usuario.Telefono</td>
+                                <td>@usuario.NombreUsuario</td>
+                                <td>@usuario.Rol</td>
+                                <td>
+                                    @if (usuario.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-warning me-1 btnEditarUsuario"
+                                            data-usuario='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(usuario))'>
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
 
-            <thead style="background-color: #2f3e4e; color: white;">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
-                    <th>Usuario</th>
-                    <th>Rol</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var usuario in Model)
+                                    @* Botón Activar/Desactivar *@
+                                    @if (usuario.Activo)
+                                    {
+                                        <a class="btn btn-sm btn-outline-secondary"
+                                           href="@Url.Action("Desactivar", "Usuarios", new { id = usuario.UsuarioId })"
+                                           title="Desactivar usuario">
+                                            <i class="fas fa-toggle-off"></i> Desactivar
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-outline-success"
+                                           href="@Url.Action("Activar", "Usuarios", new { id = usuario.UsuarioId })"
+                                           title="Activar usuario">
+                                            <i class="fas fa-toggle-on"></i> Activar
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@usuario.UsuarioId</td>
-                            <td>@usuario.Nombre</td>
-                            <td>@usuario.Apellido</td>
-                            <td>@usuario.Email</td>
-                            <td>@usuario.Telefono</td>
-                            <td>@usuario.NombreUsuario</td>
-                            <td>@usuario.Rol</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning me-1 btnEditarUsuario"
-                                        data-usuario='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(usuario))'>
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Eliminar", "Usuarios", new { id = usuario.UsuarioId })">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </a>
-                            </td>
+                            <td colspan="9" class="text-center text-muted">No hay usuarios registrados.</td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="8" class="text-center text-muted">No hay usuarios registrados.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
     <div class="modal-dialog">

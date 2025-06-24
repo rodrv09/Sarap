@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sarap.Models;
 
@@ -11,9 +12,11 @@ using Sarap.Models;
 namespace Sarap.Migrations
 {
     [DbContext(typeof(EspeciasSarapiquiContext))]
-    partial class EspeciasSarapiquiContextModelSnapshot : ModelSnapshot
+    [Migration("20250624144055_AgregarActivoEmpleado")]
+    partial class AgregarActivoEmpleado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

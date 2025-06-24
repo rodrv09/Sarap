@@ -30,13 +30,13 @@
             <table class="table table-bordered table-hover w-100 mb-0">
                 <thead style="background-color: #2f3e4e; color: white;">
                     <tr>
-                        <th>ID</th>
                         <th>Nombre Empresa</th>
                         <th>Contacto Nombre</th>
                         <th>Teléfono</th>
                         <th>Email</th>
                         <th>Dirección</th>
                         <th>Fecha Registro</th>
+                        <th>Estado</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -46,21 +46,43 @@
                         foreach (var proveedor in Model)
                         {
                             <tr>
-                                <td>@proveedor.ProveedorId</td>
                                 <td>@proveedor.NombreEmpresa</td>
                                 <td>@proveedor.ContactoNombre</td>
                                 <td>@proveedor.Telefono</td>
                                 <td>@proveedor.Email</td>
                                 <td>@proveedor.Direccion</td>
                                 <td>@proveedor.FechaRegistro?.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (proveedor.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-outline-warning me-1 btnEditarProveedor"
                                             data-proveedor='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(proveedor))'>
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
-                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Eliminar", "Proveedores", new { id = proveedor.ProveedorId })">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
+                                    @if (proveedor.Activo)
+                                    {
+                                        <a class="btn btn-sm btn-outline-secondary"
+                                           href="@Url.Action("Desactivar", "Proveedores", new { id = proveedor.ProveedorId })"
+                                           title="Desactivar proveedor">
+                                            <i class="fas fa-toggle-off"></i> Desactivar
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-outline-success"
+                                           href="@Url.Action("Activar", "Proveedores", new { id = proveedor.ProveedorId })"
+                                           title="Activar proveedor">
+                                            <i class="fas fa-toggle-on"></i> Activar
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -76,6 +98,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="agregarProveedorModal" tabindex="-1" aria-labelledby="agregarProveedorModalLabel" aria-hidden="true">
     <div class="modal-dialog">

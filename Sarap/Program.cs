@@ -7,6 +7,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ClienteRepository>();
 builder.Services.AddTransient<ProveedorRepository>();
 builder.Services.AddTransient<UsuarioRepository>();
+builder.Services.AddTransient<EmpleadoRepository>();
+
 
 var app = builder.Build();
 

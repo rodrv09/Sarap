@@ -1,0 +1,188 @@
+﻿@model List<Sarap.Models.Empleado>
+
+@{
+    ViewBag.Title = "Empleados";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-dark">Registro de Empleados</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+<div class="mb-3">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
+        <i class="fas fa-plus"></i> Agregar Empleado
+    </button>
+</div>
+
+<div class="card shadow-sm" style="background: white;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover w-100 mb-0">
+                <thead style="background-color: #2f3e4e; color: white;">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var empleado in Model)
+                        {
+                            <tr>
+                                <td>@empleado.Nombre</td>
+                                <td>@empleado.Apellido</td>
+                                <td>@empleado.Email</td>
+                                <td>@empleado.Telefono</td>
+                                <td>@empleado.Direccion</td>
+                                <td>@empleado.FechaIngreso?.ToString("yyyy-MM-dd")</td>
+                               
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No hay empleados registrados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CREAR -->
+<div class="modal fade" id="agregarEmpleadoModal" tabindex="-1" aria-labelledby="agregarEmpleadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Crear" asp-controller="Empleados" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarEmpleadoModalLabel">Agregar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="NombreCrear" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="NombreCrear" name="Nombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="ApellidoCrear" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="ApellidoCrear" name="Apellido" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="EmailCrear" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="EmailCrear" name="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="TelefonoCrear" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="TelefonoCrear" name="Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="DireccionCrear" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="DireccionCrear" name="Direccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FechaIngresoCrear" class="form-label">Fecha de Ingreso</label>
+                        <input type="date" class="form-control" id="FechaIngresoCrear" name="FechaIngreso" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal fade" id="editarEmpleadoModal" tabindex="-1" aria-labelledby="editarEmpleadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Editar" asp-controller="Empleados" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarEmpleadoModalLabel">Editar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="EmpleadoId" name="EmpleadoId" />
+
+                    <div class="mb-3">
+                        <label for="Nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="Nombre" name="Nombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="Apellido" name="Apellido" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="Telefono" name="Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="Direccion" name="Direccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FechaIngreso" class="form-label">Fecha de Ingreso</label>
+                        <input type="date" class="form-control" id="FechaIngreso" name="FechaIngreso" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalEditar = new bootstrap.Modal(document.getElementById('editarEmpleadoModal'));
+
+            document.querySelectorAll('.btnEditarEmpleado').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const empleado = JSON.parse(this.getAttribute('data-empleado'));
+
+                    document.getElementById('EmpleadoId').value = empleado.EmpleadoId;
+                    document.getElementById('Nombre').value = empleado.Nombre;
+                    document.getElementById('Apellido').value = empleado.Apellido;
+                    document.getElementById('Email').value = empleado.Email ?? '';
+                    document.getElementById('Telefono').value = empleado.Telefono ?? '';
+                    document.getElementById('Direccion').value = empleado.Direccion ?? '';
+                    document.getElementById('FechaIngreso').value = empleado.FechaIngreso ? empleado.FechaIngreso.split('T')[0] : '';
+
+                    modalEditar.show();
+                });
+            });
+        });
+    </script>
+}

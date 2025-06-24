@@ -114,5 +114,48 @@ namespace Sarap.Controllers
                 return View(usuario);
             }
         }
+
+        public async Task<IActionResult> Activar(int id)
+        {
+            var usuarios = await _repository.ReadAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.UsuarioId == id);
+
+            if (usuario == null)
+                return NotFound();
+
+            var activado = await _repository.ActivarAsync(usuario);
+            if (activado)
+            {
+                TempData["Mensaje"] = "Usuario activado correctamente.";
+            }
+            else
+            {
+                TempData["Mensaje"] = "No se pudo activar el usuario.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Desactivar(int id)
+        {
+            var usuarios = await _repository.ReadAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.UsuarioId == id);
+
+            if (usuario == null)
+                return NotFound();
+
+            var desactivado = await _repository.DesactivarAsync(usuario);
+            if (desactivado)
+            {
+                TempData["Mensaje"] = "Usuario desactivado correctamente.";
+            }
+            else
+            {
+                TempData["Mensaje"] = "No se pudo desactivar el usuario.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

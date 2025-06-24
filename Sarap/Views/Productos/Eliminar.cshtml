@@ -1,0 +1,35 @@
+﻿@model Sarap.Models.Producto
+@{
+    ViewBag.Title = "Eliminar Producto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-dark">Eliminar Producto</h2>
+
+<div class="card p-4">
+    <h4>¿Estás seguro de que deseas eliminar este producto?</h4>
+    <dl class="row mt-3">
+        <dt class="col-sm-3">Nombre</dt>
+        <dd class="col-sm-9">@Model.Nombre</dd>
+
+        <dt class="col-sm-3">Cantidad</dt>
+        <dd class="col-sm-9">@Model.Cantidad</dd>
+
+        <dt class="col-sm-3">Descripción</dt>
+        <dd class="col-sm-9">@Model.Descripcion</dd>
+
+        <dt class="col-sm-3">Precio</dt>
+        <dd class="col-sm-9">@Model.Precio.ToString("C")</dd>
+
+        <dt class="col-sm-3">Fecha de registro</dt>
+        <dd class="col-sm-9">@Model.FechaRegistro.ToString("yyyy-MM-dd")</dd>
+    </dl>
+
+    <form asp-action="Eliminar" method="post">
+        <input type="hidden" asp-for="ProductoId" />
+        <div class="d-flex justify-content-start mt-3">
+            <a asp-action="Index" class="btn btn-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </div>
+    </form>
+</div>

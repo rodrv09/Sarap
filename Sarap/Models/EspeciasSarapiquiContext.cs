@@ -21,6 +21,8 @@ public partial class EspeciasSarapiquiContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    public virtual DbSet<Producto> Productos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 => optionsBuilder.UseSqlServer("Server=chrstation.database.windows.net;Database=especias_sarapiqui;User ID=chrstation;Password=chrsonic8!;Encrypt=True;TrustServerCertificate=False;");
@@ -77,6 +79,26 @@ public partial class EspeciasSarapiquiContext : DbContext
             entity.Property(e => e.Telefono)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Producto>(entity =>
+        {
+            entity.HasKey(e => e.ProductoId).HasName("PK__Productos__..."); 
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Precio)
+                .HasColumnType("decimal(10, 2)");
+
+            entity.Property(e => e.FechaRegistro)
+                .HasDefaultValueSql("(getdate())")  // Ahora EF sabe que en la BD la fecha es por defecto GETDATE()
+                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

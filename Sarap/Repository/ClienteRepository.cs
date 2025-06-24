@@ -10,7 +10,7 @@ namespace Repository
     {
         public ClienteRepository() : base() { }
 
-        
+
     }
 
 }

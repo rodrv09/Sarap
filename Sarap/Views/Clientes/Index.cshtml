@@ -35,7 +35,7 @@
             <table class="table table-bordered table-hover w-100 mb-0">
                 <thead style="background-color: #2f3e4e; color: white;">
                     <tr>
-                        <th>ID</th>
+                        
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Email</th>
@@ -52,7 +52,7 @@
                         foreach (var cliente in Model)
                         {
                             <tr>
-                                <td>@cliente.ClienteId</td>
+                                
                                 <td>@cliente.Nombre</td>
                                 <td>@cliente.Apellido</td>
                                 <td>@cliente.Email</td>
@@ -74,11 +74,12 @@
                                             data-cliente='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(cliente))'>
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
-                                    <a class="btn btn-sm btn-outline-danger me-1"
+                                    <!--
+                                      <a class="btn btn-sm btn-outline-danger me-1"
                                        href="@Url.Action("Eliminar", "Clientes", new { id = cliente.ClienteId })">
                                         <i class="fas fa-trash-alt"></i> Eliminar
                                     </a>
-
+                                    -->
                                     @if (cliente.Activo)
                                     {
                                         <a class="btn btn-sm btn-outline-secondary"

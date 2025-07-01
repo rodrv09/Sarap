@@ -1,12 +1,13 @@
-﻿@model List<Sarap.Models.Empleado>
+﻿@model List<Sarap.Models.Empleado> <!-- Define que la vista recibirá una lista de objetos Empleado -->
 
 @{
-    ViewBag.Title = "Empleados";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Empleados"; // Título de la página
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Plantilla/layout que se va a usar
 }
 
-<h2 class="mb-4 text-dark">Registro de Empleados</h2>
+<h2 class="mb-4 text-dark">Registro de Empleados</h2> <!-- Título principal -->
 
+<!-- Mensaje de éxito si existe un mensaje en TempData["Mensaje"] -->
 @if (TempData["Mensaje"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,6 +16,7 @@
     </div>
 }
 
+<!-- Mensaje de error si existe un mensaje en TempData["Error"] -->
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -23,12 +25,14 @@
     </div>
 }
 
+<!-- Botón para abrir el modal de agregar empleado -->
 <div class="mb-3">
     <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
         <i class="fas fa-plus"></i> Agregar Empleado
     </button>
 </div>
 
+<!-- Tabla de empleados -->
 <div class="card shadow-sm" style="background: white;">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -42,6 +46,7 @@
                         <th>Dirección</th>
                         <th>Fecha Contratación</th>
                         <th>Días Vacaciones</th>
+                        <th>Estado</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -58,12 +63,38 @@
                                 <td>@empleado.Direccion</td>
                                 <td>@empleado.FechaContratacion.ToString("yyyy-MM-dd")</td>
                                 <td>@empleado.DiasVacacionesDisponibles</td>
+                                <td>
+                                    @if (empleado.DiasVacacionesDisponibles > 5)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    }
+                                </td>
                                 <td class="text-center">
+                                    <!-- Botón de editar -->
                                     <button class="btn btn-sm btn-outline-warning me-1 btnEditarEmpleado"
                                             data-empleado='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(empleado))'>
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
-                                  
+
+                                    <!-- Activar o desactivar empleado -->
+                                    @if (empleado.DiasVacacionesDisponibles > 5)
+                                    {
+                                        <form asp-action="Desactivar" asp-controller="Empleados" method="get" class="d-inline">
+                                            <input type="hidden" name="id" value="@empleado.EmpleadoId" />
+                                            <button type="submit" class="btn btn-sm btn-danger me-1">Desactivar</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Activar" asp-controller="Empleados" method="get" class="d-inline">
+                                            <input type="hidden" name="id" value="@empleado.EmpleadoId" />
+                                            <button type="submit" class="btn btn-sm btn-success me-1">Activar</button>
+                                        </form>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -71,25 +102,28 @@
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No hay empleados registrados.</td>
+                            <td colspan="9" class="text-center text-muted">No hay empleados registrados.</td>
                         </tr>
                     }
                 </tbody>
+
             </table>
         </div>
     </div>
 </div>
 
-<!-- MODAL CREAR -->
+<!-- Modal para agregar nuevo empleado -->
 <div class="modal fade" id="agregarEmpleadoModal" tabindex="-1" aria-labelledby="agregarEmpleadoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- Formulario que envía los datos al método Crear del controlador Empleados -->
             <form asp-action="Crear" asp-controller="Empleados" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="agregarEmpleadoModalLabel">Agregar Empleado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Campos del formulario -->
                     <div class="mb-3">
                         <label for="NombreCrear" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="NombreCrear" name="Nombre" required />
@@ -128,18 +162,20 @@
     </div>
 </div>
 
-<!-- MODAL EDITAR -->
+<!-- Modal para editar empleado existente -->
 <div class="modal fade" id="editarEmpleadoModal" tabindex="-1" aria-labelledby="editarEmpleadoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- Formulario que envía los datos al método Editar del controlador Empleados -->
             <form asp-action="Editar" asp-controller="Empleados" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editarEmpleadoModalLabel">Editar Empleado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="EmpleadoId" name="EmpleadoId" />
+                    <input type="hidden" id="EmpleadoId" name="EmpleadoId" /> <!-- Campo oculto para ID -->
 
+                    <!-- Campos editables del empleado -->
                     <div class="mb-3">
                         <label for="Nombre" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="Nombre" name="Nombre" required />
@@ -178,15 +214,18 @@
     </div>
 </div>
 
+<!-- Scripts de la vista -->
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const modalEditar = new bootstrap.Modal(document.getElementById('editarEmpleadoModal'));
 
+            // Agrega evento a todos los botones de editar
             document.querySelectorAll('.btnEditarEmpleado').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const empleado = JSON.parse(this.getAttribute('data-empleado'));
 
+                    // Rellenar los campos del formulario de edición con los datos del empleado
                     document.getElementById('EmpleadoId').value = empleado.EmpleadoId;
                     document.getElementById('Nombre').value = empleado.Nombre;
                     document.getElementById('Identidad').value = empleado.Identidad;
@@ -196,7 +235,7 @@
                     document.getElementById('FechaContratacion').value = empleado.FechaContratacion ? empleado.FechaContratacion.split('T')[0] : '';
                     document.getElementById('DiasVacacionesDisponibles').value = empleado.DiasVacacionesDisponibles;
 
-                    modalEditar.show();
+                    modalEditar.show(); // Mostrar modal
                 });
             });
         });

@@ -23,7 +23,11 @@ public partial class EspeciasSarapiquiContext : DbContext
 
     public virtual DbSet<Producto> Productos { get; set; }
 
-    public virtual DbSet<Empleado> Empleado { get; set; }
+    public virtual DbSet<Empleado> Empleados { get; set; }
+    public virtual DbSet<RegistroHorasQuincena> RegistroHorasQuincena { get; set; }
+    public virtual DbSet<PlanillaColones> PlanillaColones { get; set; }
+
+    public virtual DbSet<VacacionesEmpleado> VacacionesEmpleado { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -88,14 +92,16 @@ public partial class EspeciasSarapiquiContext : DbContext
 
 
         });
+
+
+
         modelBuilder.Entity<Empleado>(entity =>
         {
             entity.ToTable("Empleado");
 
-            entity.HasKey(e => e.EmpleadoId).HasName("PK_Empleado");
+            entity.HasKey(e => e.Id).HasName("PK_Empleado");
 
-            entity.Property(e => e.EmpleadoId)
-                .HasColumnName("Id"); // En SQL se llama "Id", no "EmpleadoID"
+            entity.Property(e => e.Id).HasColumnName("Id");
 
             entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
@@ -103,7 +109,7 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .IsRequired();
 
             entity.Property(e => e.Identidad)
-                .HasMaxLength(50) // Ajusta según tu base de datos
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .IsRequired();
 
@@ -120,12 +126,26 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .IsUnicode(false);
 
             entity.Property(e => e.FechaContratacion)
-                .HasColumnType("datetime")
-                .HasColumnName("FechaContratacion");
+                .HasColumnType("datetime");
 
-            entity.Property(e => e.DiasVacacionesDisponibles)
-                .HasColumnName("DiasVacacionesDisponibles");
+            entity.Property(e => e.DiasVacacionesDisponibles);
+
+            entity.Property(e => e.ApellidoPaterno)
+                .HasMaxLength(50);
+            // Aquí no ponemos IsUnicode(false) para que sea nvarchar
+
+            entity.Property(e => e.ApellidoMaterno)
+                .HasMaxLength(50);
+            // Igual
+
+            entity.Property(e => e.SalarioHora)
+                .HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Activo)
+            .HasDefaultValue(true)
+            .IsRequired();
         });
+
+
 
 
 
@@ -188,6 +208,178 @@ public partial class EspeciasSarapiquiContext : DbContext
     .IsRequired();
 
         });
+
+        modelBuilder.Entity<RegistroHorasQuincena>(entity =>
+        {
+            entity.ToTable("RegistroHorasQuincena");
+
+            entity.HasKey(e => e.Id).HasName("PK_RegistroHorasQuincena");
+
+            entity.Property(e => e.Id).HasColumnName("Id");
+
+            entity.Property(e => e.Identidad)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .IsRequired();
+
+            entity.Property(e => e.FechaInicio)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.FechaFin)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.HorasOrdinarias)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasIncapacidad)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasVacaciones)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasFeriadoLey)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasExtra15)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasExtra20)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasPermisoSinGoce)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.FechaRegistro)
+                .HasColumnType("datetime")
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<PlanillaColones>(entity =>
+        {
+            entity.ToTable("PlanillaColones");
+
+            entity.HasKey(e => e.Id).HasName("PK_PlanillaColones");
+
+            entity.Property(e => e.Id).HasColumnName("Id");
+
+            entity.Property(e => e.Identidad)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .IsRequired();
+
+            entity.Property(e => e.FechaInicio)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.FechaFin)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioOrdinario)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioIncapacidad)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioVacaciones)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioFeriado)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioExtra15)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioExtra20)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioBruto)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.DeduccionCCSS)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.SalarioNeto)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.FechaRegistro)
+    .HasColumnType("datetime")
+    .IsRequired(false);  
+
+
+            entity.Property(e => e.HorasIncapacidad)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasVacaciones)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasFeriadoLey)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasExtra15)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasExtra20)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasPermisoSinGoce)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.HorasOrdinarias)
+     .HasColumnType("decimal(18,2)")
+     .IsRequired(false); // ✅ Ahora coincide con la tabla
+
+        });
+
+        modelBuilder.Entity<VacacionesEmpleado>(entity =>
+        {
+            entity.ToTable("VacacionesEmpleado");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Identidad)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(e => e.NombreCompleto)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(e => e.DiasDisponibles)
+                .IsRequired();
+
+            entity.Property(e => e.DiasUsados)
+                .IsRequired();
+
+            entity.Property(e => e.FechaUltimaActualizacion)
+                .HasColumnType("datetime")
+                .IsRequired(false);  // Nullable datetime
+        });
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -140,7 +140,34 @@
         <a href="@Url.Action("Index", "Proveedores")"><i class="fas fa-truck"></i> Proveedores</a>
         <a href="@Url.Action("Index", "Clientes")"><i class="fas fa-users"></i>Clientes</a>
         <a href="@Url.Action("Index", "Usuarios")"><i class="fas fa-user-tie"></i>Usuarios</a>
-        <a href="@Url.Action("Index", "Empleados")"><i class="fas fa-user-tie"></i>Empleados</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-tie"></i> Empleados
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index", "Empleados")">
+                        <i class="fas fa-id-card"></i> Gestión de Empleados
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index", "RegistroHorasQuincena")">
+                        <i class="fas fa-clock"></i> Registro de Horas
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index", "PlanillaColones")">
+                        <i class="fas fa-file-invoice-dollar"></i> Planilla 
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index", "VacacionesEmpleado")">
+                        <i class="fas fa-file-invoice-dollar"></i> Vacaciones
+                    </a>
+                </li>
+            </ul>
+        </li>
+
 
         <a href="@Url.Action("Login", "Account")"><i class="fas fa-user-tie"></i>Cuenta</a>
 

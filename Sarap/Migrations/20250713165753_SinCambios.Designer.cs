@@ -12,8 +12,8 @@ using Sarap.Models;
 namespace Sarap.Migrations
 {
     [DbContext(typeof(EspeciasSarapiquiContext))]
-    [Migration("20250624150508_NombreMigracion")]
-    partial class NombreMigracion
+    [Migration("20250713165753_SinCambios")]
+    partial class SinCambios
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,38 +79,51 @@ namespace Sarap.Migrations
 
             modelBuilder.Entity("Sarap.Models.Empleado", b =>
                 {
-                    b.Property<int>("EmpleadoId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("EmpleadoID");
+                        .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmpleadoId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Apellido")
+                    b.Property<string>("ApellidoMaterno")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ApellidoPaterno")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("DiasVacacionesDisponibles")
+                        .HasColumnType("int");
 
                     b.Property<string>("Direccion")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)");
 
-                    b.Property<DateTime?>("FechaIngreso")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                    b.Property<DateTime?>("FechaContratacion")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Identidad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -118,12 +131,16 @@ namespace Sarap.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<decimal?>("SalarioHora")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Telefono")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
-                    b.HasKey("EmpleadoId")
+                    b.HasKey("Id")
                         .HasName("PK_Empleado");
 
                     b.ToTable("Empleado", (string)null);

@@ -30,7 +30,7 @@ namespace Repository
     /// <typeparam name="T">Entity type.</typeparam>
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        private readonly EspeciasSarapiquiContext _context;
+        protected readonly EspeciasSarapiquiContext _context;
         protected EspeciasSarapiquiContext DbContext => _context;
 
         public RepositoryBase()
@@ -91,7 +91,6 @@ namespace Repository
                 throw new PAWException(ex);
             }
         }
-
         public async Task<IEnumerable<T>> ReadAsync()
         {
             try
@@ -101,10 +100,11 @@ namespace Repository
             catch (Exception ex)
             {
                 Console.WriteLine("Error en ReadAsync:");
-                Console.WriteLine(ex.ToString());  // Imprime stack trace completo en consola
+                Console.WriteLine(ex.ToString());  // Imprime stack trace completo en consola o log
                 throw new PAWException(ex);
             }
         }
+
 
 
 

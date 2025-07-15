@@ -1,4 +1,4 @@
-﻿Conbina esto:@{
+﻿@{
 Layout = null;
 ViewData["Title"] = "Iniciar Sesión";
 }
@@ -110,6 +110,10 @@ ViewData["Title"] = "Iniciar Sesión";
                     </div>
                     <div class="card-footer text-center bg-light">
                         ¿No tienes cuenta? <a asp-action="Register" asp-controller="Account">Regístrate aquí</a>
+                    </div>
+                    <div class="card-footer text-center bg-light">
+                        ¿Deseas cambiar tu contraseña?
+                        <a asp-action="CambiarCredenciales" asp-controller="Usuarios">Cambiar contraseña</a>
                     </div>
                 </div>
             </div>

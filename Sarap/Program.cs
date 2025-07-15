@@ -7,25 +7,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 // Configuración de la conexión a la base de datos
 builder.Services.AddTransient<ClienteRepository>();
 builder.Services.AddTransient<ProveedorRepository>();
 builder.Services.AddTransient<UsuarioRepository>();
 builder.Services.AddTransient<EmpleadoRepository>();
+
 builder.Services.AddDbContext<EspeciasSarapiquiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-
 // Agrega autenticación por cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>   
+    .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         // Opcional: options.AccessDeniedPath = "/Account/AccessDenied";
     });
-// Configuración de la autenticación y autorización
 
 var app = builder.Build();
 
@@ -44,8 +43,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Cambiamos la ruta por defecto para que cargue Account/Login
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

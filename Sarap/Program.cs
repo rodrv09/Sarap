@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Repository;
+using Sarap.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,8 @@ builder.Services.AddTransient<ClienteRepository>();
 builder.Services.AddTransient<ProveedorRepository>();
 builder.Services.AddTransient<UsuarioRepository>();
 builder.Services.AddTransient<EmpleadoRepository>();
-
+builder.Services.AddDbContext<EspeciasSarapiquiContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

@@ -1,0 +1,88 @@
+﻿@model Sarap.Models.FacturaViewModel
+
+@{
+    ViewBag.Title = "Crear Factura";
+}
+
+<h2>Crear Factura</h2>
+
+<form method="post" asp-action="CrearFactura">
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="Factura.Fecha">Fecha:</label>
+            <input type="date" class="form-control" asp-for="Factura.Fecha" />
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="Factura.ClienteNombre">Cliente:</label>
+            <input type="text" class="form-control" asp-for="Factura.ClienteNombre" placeholder="Nombre del cliente" />
+        </div>
+    </div>
+
+    <hr />
+
+    <h4>Agregar Producto</h4>
+    <div class="row mb-3 align-items-end">
+        <div class="col-md-6">
+            <label>Producto:</label>
+            <select class="form-select" asp-for="NuevoDetalle.ProductoID" asp-items="Model.ProductosSelectList">
+                <option value="">-- Seleccione un producto --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Cantidad:</label>
+            <input type="number" min="1" class="form-control" asp-for="NuevoDetalle.Cantidad" />
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" name="accion" value="AgregarProducto" class="btn btn-primary">Agregar producto</button>
+        </div>
+    </div>
+
+    @if (Model.FacturaDetalles != null && Model.FacturaDetalles.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio unitario</th>
+                    <th>Cantidad</th>
+                    <th>Total línea</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.FacturaDetalles)
+                {
+                    <tr>
+                        <td>@detalle.NombreProducto</td>
+                        <td>@detalle.PrecioUnitario.ToString("C")</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@detalle.TotalLinea.ToString("C")</td>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Factura.TipoPago">Tipo de Pago:</label>
+                                <select class="form-select" asp-for="Factura.TipoPago">
+                                    <option value="">-- Seleccione un tipo de pago --</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                    <td>
+                        <strong>@Model.FacturaDetalles.Sum(d => d.TotalLinea).ToString("C")</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" name="accion" value="FinalizarFactura" class="btn btn-success">Finalizar factura</button>
+    }
+</form>

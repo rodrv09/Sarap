@@ -28,6 +28,9 @@ public partial class EspeciasSarapiquiContext : DbContext
     public virtual DbSet<PlanillaColones> PlanillaColones { get; set; }
 
     public virtual DbSet<VacacionesEmpleado> VacacionesEmpleado { get; set; }
+    public virtual DbSet<Factura> Facturas { get; set; }
+
+    public DbSet<FacturaDetalle> FacturaDetalles { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -146,29 +149,55 @@ public partial class EspeciasSarapiquiContext : DbContext
         });
 
 
-
-
-
-
         modelBuilder.Entity<Producto>(entity =>
         {
-            entity.HasKey(e => e.ProductoId).HasName("PK__Productos__..."); 
+            // Clave primaria
+            entity.HasKey(e => e.ProductoID).HasName("PK_Productos");
 
+            // Nombre: nvarchar(100), obligatorio, Unicode (si quieres permitir acentos)
             entity.Property(e => e.Nombre)
+                .IsRequired()
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .IsUnicode(true);
 
+            // Descripcion: nvarchar(255), opcional, Unicode
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(255)
-                .IsUnicode(false);
+                .IsUnicode(true);
 
+            // Categoria: nvarchar(50), opcional, Unicode
+            entity.Property(e => e.Categoria)
+                .HasMaxLength(50)
+                .IsUnicode(true);
+
+            // UnidadMedida: nvarchar(20), opcional, Unicode
+            entity.Property(e => e.UnidadMedida)
+                .HasMaxLength(20)
+                .IsUnicode(true);
+
+            // Cantidad: decimal(10,2), obligatorio
+            entity.Property(e => e.Cantidad)
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
+
+            // Precio: decimal(10,2), obligatorio
             entity.Property(e => e.Precio)
-                .HasColumnType("decimal(10, 2)");
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
 
-            entity.Property(e => e.FechaRegistro)
-                .HasDefaultValueSql("(getdate())")  
-                .HasColumnType("datetime");
+            // ProveedorID: int, opcional
+            entity.Property(e => e.ProveedorID)
+                .IsRequired(false);
+
+            // Activo: bit, opcional, con valor por defecto true (1)
+            entity.Property(e => e.Activo)
+                .HasDefaultValue(true);
+
+            // StockMinimo: int, opcional, con valor por defecto 0
+            entity.Property(e => e.StockMinimo)
+                .HasDefaultValue(0);
         });
+
 
         modelBuilder.Entity<Usuario>(entity =>
         {
@@ -379,7 +408,112 @@ public partial class EspeciasSarapiquiContext : DbContext
                 .IsRequired(false);  // Nullable datetime
         });
 
+        modelBuilder.Entity<Categoria>(entity =>
+        {
+            entity.ToTable("Categorias");
 
+            entity.HasKey(e => e.CategoriaID);
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .IsRequired(false);
+        });
+
+        modelBuilder.Entity<Factura>(entity =>
+        {
+            entity.ToTable("Facturas");
+            entity.HasKey(e => e.FacturaID);
+
+            entity.Property(e => e.Fecha)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.ClienteNombre)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.ClienteIdentidad)
+                .HasMaxLength(50)
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.Total)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.Subtotal)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.Impuesto)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.Descuento)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.TipoPago)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(e => e.Usuario)
+                .HasMaxLength(100)
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.Observaciones)
+                .HasColumnType("nvarchar(max)")
+                .IsRequired(false); // Nullable
+        });
+        modelBuilder.Entity<FacturaDetalle>(entity =>
+        {
+            entity.ToTable("FacturaDetalles");
+            entity.HasKey(e => e.DetalleID);
+
+            entity.Property(e => e.FacturaID)
+                .IsRequired();
+
+            entity.Property(e => e.ProductoID)
+                .IsRequired();
+
+            entity.Property(e => e.NombreProducto)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(e => e.Cantidad)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.PrecioUnitario)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.Subtotal)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.Impuesto)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.Descuento)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false); // Nullable
+
+            entity.Property(e => e.TotalLinea)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            // Opcional: si quieres configurar relación con Factura
+            // entity.HasOne<Factura>()
+            //       .WithMany()
+            //       .HasForeignKey(e => e.FacturaID)
+            //       .OnDelete(DeleteBehavior.Cascade);
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

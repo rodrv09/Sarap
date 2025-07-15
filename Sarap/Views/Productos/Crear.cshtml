@@ -1,0 +1,26 @@
+﻿@model Sarap.Models.Producto
+
+@{
+    ViewBag.Title = "Crear Producto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Crear Producto</h2>
+
+<form asp-action="Crear" method="post">
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <!-- Añade aquí los demás campos como en el modal Crear -->
+
+    <button type="submit" class="btn btn-success">Crear</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

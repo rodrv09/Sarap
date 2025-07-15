@@ -1,0 +1,54 @@
+﻿@model Sarap.Models.FacturaViewModel
+
+@{
+    ViewBag.Title = "Facturas";
+}
+
+<h2>Facturas</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+
+<a class="btn btn-primary mb-3" asp-action="Crear">+ Nueva Factura</a>
+
+@if (Model.Facturas != null && Model.Facturas.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Tipo de Pago</th>
+                <th>Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in Model.Facturas)
+            {
+                <tr>
+                    <td>@factura.FacturaID</td>
+                    <td>@factura.Fecha.ToShortDateString()</td>
+                    <td>@factura.ClienteNombre</td>
+                    <td>@factura.Total.ToString("C")</td>
+                    <td>@factura.TipoPago</td>
+                    <td>@factura.Usuario</td>
+                    <td>
+                        <a class="btn btn-sm btn-secondary" asp-action="Editar" asp-route-id="@factura.FacturaID">Editar</a>
+                        <a class="btn btn-sm btn-danger" asp-action="Eliminar" asp-route-id="@factura.FacturaID">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">No hay facturas registradas.</div>
+}

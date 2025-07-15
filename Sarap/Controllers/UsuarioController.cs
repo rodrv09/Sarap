@@ -3,6 +3,8 @@ using Repository;
 using Sarap.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Sarap.Controllers
 {
@@ -156,6 +158,59 @@ namespace Sarap.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        public IActionResult CambiarCredenciales()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarCredenciales(CambiarCredencialesViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var usuarios = await _repository.ReadAsync();
+            var username = User.Identity?.Name;
+
+            var usuario = usuarios.FirstOrDefault(u => u.NombreUsuario == username);
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "Usuario no encontrado.");
+                return View(model);
+            }
+
+            // Validar contraseña actual
+            var contraseñaHashActual = HashPassword(model.ContraseñaActual);
+            if (usuario.ContraseñaHash != contraseñaHashActual)
+            {
+                ModelState.AddModelError("ContraseñaActual", "La contraseña actual es incorrecta.");
+                return View(model);
+            }
+
+            // Actualizar datos
+            usuario.Email = model.NuevoEmail;
+            usuario.ContraseñaHash = HashPassword(model.NuevaContraseña);
+
+            var actualizado = await _repository.UpdateAsync(usuario);
+            if (actualizado)
+            {
+                TempData["Mensaje"] = "Credenciales actualizadas correctamente.";
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("", "No se pudo actualizar la información.");
+            return View(model);
+        }
+
+        // Función para hashear contraseña
+        private string HashPassword(string password)
+        {
+            using var sha = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
     }
 }

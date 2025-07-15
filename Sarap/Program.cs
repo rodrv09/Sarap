@@ -1,24 +1,30 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddTransient<ClienteRepository>();
 builder.Services.AddTransient<ProveedorRepository>();
 builder.Services.AddTransient<UsuarioRepository>();
 builder.Services.AddTransient<EmpleadoRepository>();
 
+// Agrega autenticación por cookies
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        // Opcional: options.AccessDeniedPath = "/Account/AccessDenied";
+    });
 
 var app = builder.Build();
 
-// Si usas Program.cs (.NET 6+)
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -27,6 +33,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// IMPORTANTE: Usa autenticación antes que autorización
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

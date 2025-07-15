@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Sarap.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,14 +19,25 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Index()
         {
             var empleados = await _repository.ReadAsync();
+
+            foreach (var empleado in empleados)
+            {
+                if (empleado.FechaContratacion != null)
+                {
+                    // Resta de DateTime, resultado TimeSpan (no nullable)
+                    TimeSpan diferencia = DateTime.Now - empleado.FechaContratacion.Value;
+
+                    empleado.DiasVacacionesDisponibles = (int)(diferencia.TotalDays / 30);
+                }
+                else
+                {
+                    empleado.DiasVacacionesDisponibles = 0;
+                }
+            }
+
             return View(empleados.ToList());
         }
 
-        // Eliminar esta acción si no tienes vista Crear.cshtml
-        // public IActionResult Crear()
-        // {
-        //     return View();
-        // }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -37,34 +49,65 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var creado = await _repository.CreateAsync(empleado);
-            if (creado)
+            try
             {
-                TempData["Mensaje"] = "Empleado creado correctamente.";
+                if (empleado.FechaContratacion != null)
+                {
+                    var diferencia = DateTime.Now - empleado.FechaContratacion.Value;
+                    empleado.DiasVacacionesDisponibles = (int)(diferencia.TotalDays / 30);
+                }
+                else
+                {
+                    empleado.DiasVacacionesDisponibles = 0;
+                }
+
+                var creado = await _repository.CreateAsync(empleado);
+                if (creado)
+                {
+                    TempData["Mensaje"] = "Empleado creado correctamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "No se pudo crear el empleado.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                var mensaje = ex.InnerException?.Message ?? ex.Message;
+                TempData["Error"] = $"Excepción: {mensaje}";
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Error"] = "No se pudo crear el empleado.";
-            return RedirectToAction(nameof(Index));
         }
+
+
 
         public async Task<IActionResult> Editar(int id)
         {
             var empleados = await _repository.ReadAsync();
-            var empleado = empleados.FirstOrDefault(e => e.EmpleadoId == id);
+            var empleado = empleados.FirstOrDefault(e => e.Id == id);
 
             if (empleado == null)
                 return NotFound();
 
             return View(empleado);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(Empleado empleado)
         {
             if (!ModelState.IsValid)
                 return View(empleado);
+
+            if (empleado.FechaContratacion != null)
+            {
+                var diferencia = DateTime.Now - empleado.FechaContratacion.Value;
+                empleado.DiasVacacionesDisponibles = (int)(diferencia.TotalDays / 30);
+            }
+            else
+            {
+                empleado.DiasVacacionesDisponibles = 0;
+            }
 
             var actualizado = await _repository.UpdateAsync(empleado);
             if (actualizado)
@@ -77,10 +120,11 @@ namespace Sarap.Controllers
             return View(empleado);
         }
 
+
         public async Task<IActionResult> Eliminar(int id)
         {
             var empleados = await _repository.ReadAsync();
-            var empleado = empleados.FirstOrDefault(e => e.EmpleadoId == id);
+            var empleado = empleados.FirstOrDefault(e => e.Id == id);
 
             if (empleado == null)
                 return NotFound();
@@ -93,7 +137,7 @@ namespace Sarap.Controllers
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
             var empleados = await _repository.ReadAsync();
-            var empleado = empleados.FirstOrDefault(e => e.EmpleadoId == id);
+            var empleado = empleados.FirstOrDefault(e => e.Id == id);
 
             if (empleado == null)
                 return NotFound();
@@ -112,7 +156,7 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Activar(int id)
         {
             var empleados = await _repository.ReadAsync();
-            var empleado = empleados.FirstOrDefault(e => e.EmpleadoId == id);
+            var empleado = empleados.FirstOrDefault(e => e.Id == id);
 
             if (empleado == null)
                 return NotFound();
@@ -133,7 +177,7 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Desactivar(int id)
         {
             var empleados = await _repository.ReadAsync();
-            var empleado = empleados.FirstOrDefault(e => e.EmpleadoId == id);
+            var empleado = empleados.FirstOrDefault(e => e.Id == id);
 
             if (empleado == null)
                 return NotFound();

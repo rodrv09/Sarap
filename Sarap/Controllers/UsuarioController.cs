@@ -58,30 +58,30 @@ namespace Sarap.Controllers
             }
         }
 
-        public IActionResult Crear()
-        {
-            return View();
-        }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Usuario usuario)
         {
             if (!ModelState.IsValid)
-                return View(usuario);
+            {
+                TempData["Error"] = "Datos inválidos al crear el usuario.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var creado = await _repository.CreateAsync(usuario);
             if (creado)
             {
                 TempData["Mensaje"] = "Usuario creado correctamente.";
-                return RedirectToAction(nameof(Index));
             }
             else
             {
-                ModelState.AddModelError("", "No se pudo crear el usuario.");
-                return View(usuario);
+                TempData["Error"] = "No se pudo crear el usuario.";
             }
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> Eliminar(int id)
         {

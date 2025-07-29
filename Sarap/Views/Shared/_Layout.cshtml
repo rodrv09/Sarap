@@ -142,22 +142,23 @@
     {
         <div class="sidebar">
             <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Inicio</a>
-            <a href="@Url.Action("Index", "Categorias")"><i class="fas fa-box"></i> Categorias</a>
-            <a href="@Url.Action("Index", "Productos")"><i class="fas fa-box"></i> Productos</a>
-            <a href="@Url.Action("Index", "Proveedores")"><i class="fas fa-truck"></i> Proveedores</a>
-            <a href="@Url.Action("Index", "Clientes")"><i class="fas fa-users"></i> Clientes</a>
-            <a href="@Url.Action("Index", "Facturas")"><i class="fas fa-users"></i> Facturas</a>
-            <a href="@Url.Action("Index", "Usuarios")"><i class="fas fa-user-tie"></i> Usuarios</a>
-            <a href="@Url.Action("Index", "NotaCredito")"><i class="fas fa-users"></i>Nota Credito</a>
-            <a href="@Url.Action("Index", "Reportes")"><i class="fas fa-users"></i>Reportes</a>
+            <a href="@Url.Action("Index", "Categorias")"><i class="fas fa-tags"></i> Categorías</a>
+            <a href="@Url.Action("Index", "Productos")"><i class="fas fa-box-open"></i> Productos</a>
+            <a href="@Url.Action("Index", "Proveedores")"><i class="fas fa-truck-loading"></i> Proveedores</a>
+            <a href="@Url.Action("Index", "Clientes")"><i class="fas fa-user-friends"></i> Clientes</a>
+            <a href="@Url.Action("Index", "Facturas")"><i class="fas fa-file-invoice"></i> Facturas</a>
+            <a href="@Url.Action("Index", "Usuarios")"><i class="fas fa-users-cog"></i> Usuarios</a>
+            <a href="@Url.Action("Index", "NotaCredito")"><i class="fas fa-credit-card"></i> Nota Crédito</a>
+            <a href="@Url.Action("Index", "Reportes")"><i class="fas fa-chart-line"></i> Reportes</a>
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-tie"></i> Empleados
+                    <i class="fas fa-briefcase"></i> Empleados
                 </a>
                 <ul class="dropdown-menu">
                     <li>
                         <a class="dropdown-item" href="@Url.Action("Index", "Empleados")">
-                            <i class="fas fa-id-card"></i> Gestión de Empleados
+                            <i class="fas fa-id-badge"></i> Gestión de Empleados
                         </a>
                     </li>
                     <li>
@@ -172,14 +173,15 @@
                     </li>
                     <li>
                         <a class="dropdown-item" href="@Url.Action("Index", "VacacionesEmpleado")">
-                            <i class="fas fa-file-invoice-dollar"></i> Vacaciones
+                            <i class="fas fa-umbrella-beach"></i> Vacaciones
                         </a>
                     </li>
                 </ul>
             </li>
 
-            <a href="@Url.Action("Login", "Account")"><i class="fas fa-user-tie"></i> Cuenta</a>
+            <a href="@Url.Action("Login", "Account")"><i class="fas fa-user-circle"></i> Cuenta</a>
         </div>
+
     }
 
 

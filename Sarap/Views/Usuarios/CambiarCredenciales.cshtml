@@ -5,43 +5,75 @@
     ViewData["OcultarBarraLateral"] = true;
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
-<form asp-action="CambiarCredenciales" method="post">
-    <div asp-validation-summary="All" class="text-danger"></div>
+<style>
+    body {
+        margin-left: 0 !important;
+    }
 
-    <div class="form-group mb-3">
-        <label asp-for="NombreUsuario"></label>
-        <input asp-for="NombreUsuario" class="form-control" />
-        <span asp-validation-for="NombreUsuario" class="text-danger"></span>
-    </div>
+    .container {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    .card-custom {
+        max-width: 480px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        padding: 2rem;
+        margin: 0 auto 2rem auto; /* Centrado horizontal + margen inferior */
+    }
 
-    <div class="form-group mb-3">
-        <label asp-for="NuevoEmail"></label>
-        <input asp-for="NuevoEmail" class="form-control" />
-        <span asp-validation-for="NuevoEmail" class="text-danger"></span>
-    </div>
+    .form-group label {
+        font-weight: 600;
+    }
 
-    <div class="form-group mb-3">
-        <label asp-for="ContraseñaActual"></label>
-        <input asp-for="ContraseñaActual" type="password" class="form-control" />
-        <span asp-validation-for="ContraseñaActual" class="text-danger"></span>
-    </div>
+    .btn-primary {
+        min-width: 140px;
+        display: block;
+        margin: 1.5rem auto 0 auto; /* Centrar botón */
+    }
+</style>
 
-    <div class="form-group mb-3">
-        <label asp-for="NuevaContraseña"></label>
-        <input asp-for="NuevaContraseña" type="password" class="form-control" />
-        <span asp-validation-for="NuevaContraseña" class="text-danger"></span>
-    </div>
+<div class="card-custom">
+    <form asp-action="CambiarCredenciales" method="post">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-    <div class="form-group mb-3">
-        <label asp-for="ConfirmarContraseña"></label>
-        <input asp-for="ConfirmarContraseña" type="password" class="form-control" />
-        <span asp-validation-for="ConfirmarContraseña" class="text-danger"></span>
-    </div>
+        <div class="form-group mb-3">
+            <label asp-for="NombreUsuario"></label>
+            <input asp-for="NombreUsuario" class="form-control" />
+            <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
-</form>
+        <div class="form-group mb-3">
+            <label asp-for="NuevoEmail"></label>
+            <input asp-for="NuevoEmail" class="form-control" />
+            <span asp-validation-for="NuevoEmail" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ContraseñaActual"></label>
+            <input asp-for="ContraseñaActual" type="password" class="form-control" />
+            <span asp-validation-for="ContraseñaActual" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NuevaContraseña"></label>
+            <input asp-for="NuevaContraseña" type="password" class="form-control" />
+            <span asp-validation-for="NuevaContraseña" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ConfirmarContraseña"></label>
+            <input asp-for="ConfirmarContraseña" type="password" class="form-control" />
+            <span asp-validation-for="ConfirmarContraseña" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

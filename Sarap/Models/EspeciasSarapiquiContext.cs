@@ -31,6 +31,8 @@ public partial class EspeciasSarapiquiContext : DbContext
     public virtual DbSet<Factura> Facturas { get; set; }
 
     public DbSet<FacturaDetalle> FacturaDetalles { get; set; }
+    public DbSet<NotaCredito> NotaCredito { get; set; }
+
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

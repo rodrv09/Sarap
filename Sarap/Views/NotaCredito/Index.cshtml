@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Sarap.Models.NotaCredito>
+
+@{
+    ViewBag.Title = "Notas de Crédito";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .nota-container {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+        overflow-x: auto;
+    }
+
+    .nota-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .nota-header h2 {
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #222;
+    }
+
+    table.nota-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        min-width: 900px;
+    }
+
+    table.nota-table th, table.nota-table td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: center;
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+
+    table.nota-table th {
+        background-color: #f4f4f4;
+        font-weight: 600;
+        color: #555;
+    }
+
+    table.nota-table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        margin-top: 1rem;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 1rem;
+        font-size: 1.1rem;
+        color: #555;
+    }
+</style>
+
+<div class="nota-container">
+    <div class="nota-header">
+        <h2>Notas de Crédito</h2>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="nota-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Factura #</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var nota in Model)
+                {
+                    <tr>
+                        <td>@nota.NotaCreditoID</td>
+                        <td>@nota.FacturaID</td>
+                        <td>@nota.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@nota.Monto.ToString("C")</td>
+                        <td>@nota.Motivo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="no-data">No hay notas de crédito registradas.</div>
+    }
+
+</div>

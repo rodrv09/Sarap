@@ -13,6 +13,8 @@ namespace Sarap.Models
         public List<FacturaDetalle> FacturaDetalles { get; set; }
 
         public List<SelectListItem> ProductosSelectList { get; set; }
+        public List<SelectListItem> ClientesSelectList { get; set; } = new List<SelectListItem>();
+
         public List<Factura> Facturas { get; set; }
 
     }

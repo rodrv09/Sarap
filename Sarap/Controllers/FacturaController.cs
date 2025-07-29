@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Sarap.Models;
 using System;
@@ -40,7 +39,8 @@ namespace Sarap.Controllers
                 Factura = new Factura { Fecha = DateTime.Now },
                 NuevoDetalle = new FacturaDetalle(),
                 FacturaDetalles = new List<FacturaDetalle>(),
-                ProductosSelectList = ObtenerProductosSelectList()
+                ProductosSelectList = ObtenerProductosSelectList(),
+                ClientesSelectList = ObtenerClientesSelectList()
             };
 
             return View(model);
@@ -51,8 +51,8 @@ namespace Sarap.Controllers
         public async Task<IActionResult> CrearFactura(FacturaViewModel model, string accion)
         {
             model.ProductosSelectList = ObtenerProductosSelectList();
+            model.ClientesSelectList = ObtenerClientesSelectList();
 
-            // Leer los detalles anteriores desde TempData
             var detalles = TempData["FacturaDetalles"] != null
                 ? JsonConvert.DeserializeObject<List<FacturaDetalle>>(TempData["FacturaDetalles"].ToString())
                 : new List<FacturaDetalle>();
@@ -64,7 +64,6 @@ namespace Sarap.Controllers
                 {
                     var detalle = new FacturaDetalle
                     {
-                        DetalleID = new Random().Next(1000, 9999),
                         ProductoID = producto.ProductoID,
                         NombreProducto = producto.Nombre,
                         PrecioUnitario = producto.Precio,
@@ -83,7 +82,6 @@ namespace Sarap.Controllers
 
                 return View("Crear", model);
             }
-
             else if (accion == "FinalizarFactura")
             {
                 model.FacturaDetalles = detalles;
@@ -93,6 +91,24 @@ namespace Sarap.Controllers
                     ModelState.AddModelError("", "Debe agregar al menos un producto.");
                     return View("Crear", model);
                 }
+
+                // Validar ClienteIdentidad (string) y convertir a int para búsqueda
+                if (string.IsNullOrEmpty(model.Factura.ClienteIdentidad) ||
+                    !int.TryParse(model.Factura.ClienteIdentidad, out int clienteId) ||
+                    clienteId <= 0)
+                {
+                    ModelState.AddModelError("Factura.ClienteIdentidad", "Debe seleccionar un cliente válido.");
+                    return View("Crear", model);
+                }
+
+                var cliente = _context.Clientes.FirstOrDefault(c => c.ClienteId == clienteId);
+                if (cliente == null)
+                {
+                    ModelState.AddModelError("Factura.ClienteIdentidad", "Cliente seleccionado no existe.");
+                    return View("Crear", model);
+                }
+
+                model.Factura.ClienteNombre = cliente.Nombre + " " + cliente.Apellido;
 
                 model.Factura.Total = model.FacturaDetalles.Sum(d => d.TotalLinea);
                 model.Factura.Subtotal = model.FacturaDetalles.Sum(d => d.Subtotal);
@@ -111,16 +127,14 @@ namespace Sarap.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData.Remove("FacturaDetalles");
-
                 TempData["Mensaje"] = "Factura creada correctamente.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View("Crear", model);
         }
 
-
-        // Método auxiliar para el dropdown
         private List<SelectListItem> ObtenerProductosSelectList()
         {
             return _context.Productos.Select(p => new SelectListItem
@@ -129,6 +143,16 @@ namespace Sarap.Controllers
                 Text = p.Nombre
             }).ToList();
         }
+
+        private List<SelectListItem> ObtenerClientesSelectList()
+        {
+            return _context.Clientes
+                .Where(c => c.Activo)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.ClienteId.ToString(),
+                    Text = c.Nombre + " " + c.Apellido
+                }).ToList();
+        }
     }
 }
-

@@ -15,9 +15,12 @@
         </div>
 
         <div class="col-md-8">
-            <label asp-for="Factura.ClienteNombre">Cliente:</label>
-            <input type="text" class="form-control" asp-for="Factura.ClienteNombre" placeholder="Nombre del cliente" />
-        </div>
+            <label asp-for="Factura.ClienteIdentidad">Cliente:</label>
+            <select class="form-select" asp-for="Factura.ClienteIdentidad" asp-items="Model.ClientesSelectList">
+                <option value="">-- Seleccione un cliente --</option>
+            </select>
+
+             </div>
     </div>
 
     <hr />
@@ -60,18 +63,6 @@
                         <td>@detalle.PrecioUnitario.ToString("C")</td>
                         <td>@detalle.Cantidad</td>
                         <td>@detalle.TotalLinea.ToString("C")</td>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Factura.TipoPago">Tipo de Pago:</label>
-                                <select class="form-select" asp-for="Factura.TipoPago">
-                                    <option value="">-- Seleccione un tipo de pago --</option>
-                                    <option value="Efectivo">Efectivo</option>
-                                    <option value="Tarjeta">Tarjeta</option>
-                                    <option value="Transferencia">Transferencia</option>
-                                </select>
-                            </div>
-                        </div>
-
                     </tr>
                 }
                 <tr>
@@ -82,6 +73,19 @@
                 </tr>
             </tbody>
         </table>
+
+        <!-- Campo Tipo de Pago (fuera del foreach) -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Factura.TipoPago">Tipo de Pago:</label>
+                <select class="form-select" asp-for="Factura.TipoPago">
+                    <option value="">-- Seleccione un tipo de pago --</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </div>
+        </div>
 
         <button type="submit" name="accion" value="FinalizarFactura" class="btn btn-success">Finalizar factura</button>
     }

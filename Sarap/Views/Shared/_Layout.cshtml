@@ -9,10 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
     <style>
-        .main-content.sin-sidebar {
-            margin-left: 0 !important;
-        }
-
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
@@ -45,16 +41,19 @@
             top: 56px;
             left: 0;
             padding-top: 20px;
+            overflow-y: auto;
         }
 
-            .sidebar a {
+            .sidebar a,
+            .sidebar .nav-link {
                 color: #bdc3c7;
                 padding: 12px 20px;
                 display: block;
                 text-decoration: none;
             }
 
-                .sidebar a:hover {
+                .sidebar a:hover,
+                .sidebar .nav-link:hover {
                     background-color: #1abc9c;
                     color: #fff;
                 }
@@ -67,6 +66,10 @@
             margin-left: 220px;
             padding: 30px;
         }
+
+            .main-content.sin-sidebar {
+                margin-left: 0 !important;
+            }
 
         footer {
             background-color: #1f2d3d;
@@ -83,7 +86,8 @@
             color: #e0e0e0;
         }
 
-            body.dark-mode .navbar {
+            body.dark-mode .navbar,
+            body.dark-mode footer {
                 background-color: #181818;
             }
 
@@ -99,10 +103,6 @@
                         background-color: #444;
                     }
 
-            body.dark-mode footer {
-                background-color: #181818;
-            }
-
         .navbar .fa-user-circle {
             font-size: 1.5rem;
         }
@@ -115,12 +115,14 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                 <img src="~/images/logo.png" alt="Logo Especias Sarapiquí" />
                 Especias Sarapiquí
             </a>
+
             <div class="d-flex align-items-center ms-auto gap-3">
                 <button id="darkModeToggle" class="btn btn-sm text-white" title="Modo oscuro">
                     <i class="fas fa-moon"></i>
@@ -131,13 +133,14 @@
                         <i class="fas fa-user-circle"></i> @ViewBag.Usuario
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                        <a href="@Url.Action("Login", "Account")"><i class="fas fa-user-tie"></i>Cerrar sesion</a>
+                        <li><a class="dropdown-item" href="@Url.Action("Login", "Account")"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Sidebar -->
     @{
         var ocultarBarra = ViewData["OcultarBarraLateral"] as bool? ?? false;
     }
@@ -155,59 +158,40 @@
             <a href="@Url.Action("Index", "NotaCredito")"><i class="fas fa-credit-card"></i> Nota Crédito</a>
             <a href="@Url.Action("Index", "Reportes")"><i class="fas fa-chart-line"></i> Reportes</a>
 
-            <li class="nav-item dropdown">
+            <!-- Empleados -->
+            <div class="nav-item dropdown px-3">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-briefcase"></i> Empleados
                 </a>
                 <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" href="@Url.Action("Index", "Empleados")">
-                            <i class="fas fa-id-badge"></i> Gestión de Empleados
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="@Url.Action("Index", "RegistroHorasQuincena")">
-                            <i class="fas fa-clock"></i> Registro de Horas
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="@Url.Action("Index", "PlanillaColones")">
-                            <i class="fas fa-file-invoice-dollar"></i> Planilla
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="@Url.Action("Index", "VacacionesEmpleado")">
-                            <i class="fas fa-umbrella-beach"></i> Vacaciones
-                        </a>
-                    </li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "Empleados")"><i class="fas fa-id-badge"></i> Gestión de Empleados</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "RegistroHorasQuincena")"><i class="fas fa-clock"></i> Registro de Horas</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "PlanillaColones")"><i class="fas fa-file-invoice-dollar"></i> Planilla</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "VacacionesEmpleado")"><i class="fas fa-umbrella-beach"></i> Vacaciones</a></li>
                 </ul>
-            </li>
+            </div>
 
             <a href="@Url.Action("Login", "Account")"><i class="fas fa-user-circle"></i> Cuenta</a>
         </div>
-
     }
 
-
-
-
-
+    <!-- Main Content -->
     <main class="main-content @(ocultarBarra ? "sin-sidebar" : "")">
         @RenderBody()
     </main>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dark Mode
         if (localStorage.getItem('modoOscuro') === 'true') {
             document.body.classList.add('dark-mode');
         }
 
-        const toggle = document.getElementById("darkModeToggle");
-        toggle.addEventListener("click", () => {
+        document.getElementById("darkModeToggle").addEventListener("click", () => {
             document.body.classList.toggle("dark-mode");
-            const activado = document.body.classList.contains("dark-mode");
-            localStorage.setItem("modoOscuro", activado);
+            localStorage.setItem("modoOscuro", document.body.classList.contains("dark-mode"));
         });
     </script>
 

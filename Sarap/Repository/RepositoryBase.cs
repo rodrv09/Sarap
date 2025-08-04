@@ -1,4 +1,5 @@
 ﻿using CAAP2.Architecture.Exceptions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Sarap.Models;
 using System;
@@ -83,12 +84,32 @@ namespace Repository
         {
             try
             {
-                _context.Remove(entity);
+                _context.Set<T>().Remove(entity);
                 return await SaveAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Manejo específico para errores de base de datos
+                if (dbEx.InnerException is SqlException sqlEx)
+                {
+                    switch (sqlEx.Number)
+                    {
+                        case 547: // Error de restricción de clave foránea
+                            throw new PAWException("No se puede eliminar el registro porque tiene relaciones con otros datos.", dbEx);
+                        case 2627: // Violación de clave única/primaria
+                        case 2601:
+                            throw new PAWException("Error de clave duplicada al intentar eliminar.", dbEx);
+                        default:
+                            throw new PAWException($"Error de SQL Server (código {sqlEx.Number}): {sqlEx.Message}", dbEx);
+                    }
+                }
+                throw new PAWException("Error de base de datos al eliminar el registro.", dbEx);
             }
             catch (Exception ex)
             {
-                throw new PAWException(ex);
+                // Loggear el error real
+                Console.WriteLine($"Error al eliminar: {ex.ToString()}");
+                throw new PAWException("Error general al eliminar el registro.", ex);
             }
         }
         public async Task<IEnumerable<T>> ReadAsync()
@@ -128,9 +149,21 @@ namespace Repository
                 int changes = await _context.SaveChangesAsync();
                 return changes > 0;
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new PAWException("El registro fue modificado o eliminado por otro usuario.", ex);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                if (dbEx.InnerException is SqlException sqlEx)
+                {
+                    throw new PAWException($"Error de base de datos (SQL {sqlEx.Number}): {sqlEx.Message}", dbEx);
+                }
+                throw new PAWException("Error al guardar cambios en la base de datos.", dbEx);
+            }
             catch (Exception ex)
             {
-                throw new PAWException("Error saving changes to the database", ex);
+                throw new PAWException("Error inesperado al guardar cambios.", ex);
             }
         }
 

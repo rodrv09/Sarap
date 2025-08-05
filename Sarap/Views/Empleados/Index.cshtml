@@ -104,6 +104,22 @@
                                                     title="Editar empleado">
                                                 <i class="fas fa-edit"></i>
                                             </button>
+                                            @if (empleado.Activo == true)
+                                            {
+                                                <a class="btn btn-sm btn-outline-warning"
+                                                   href="@Url.Action("Desactivar", "Empleados", new { id = empleado.Id })"
+                                                   title="Desactivar empleado">
+                                                    <i class="fas fa-toggle-on"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-sm btn-outline-success"
+                                                   href="@Url.Action("Activar", "Empleados", new { id = empleado.Id })"
+                                                   title="Activar empleado">
+                                                    <i class="fas fa-toggle-off"></i>
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>

@@ -31,10 +31,9 @@ namespace Sarap.Controllers
             return View(productos.ToList());
         }
 
-    // Mostrar formulario para crear
-    public IActionResult Crear()
+        // Mostrar formulario para crear
+        public IActionResult Crear()
         {
-            // Simplemente redirige al Index si no hay vista Crear.cshtml
             return RedirectToAction(nameof(Index));
         }
 
@@ -53,6 +52,8 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            producto.Activo = true;
+
             var creado = await _repository.CreateAsync(producto);
             if (creado)
             {
@@ -63,9 +64,6 @@ namespace Sarap.Controllers
             TempData["Error"] = "No se pudo crear el producto.";
             return RedirectToAction(nameof(Index));
         }
-
-
-
 
         // Mostrar formulario de edición
         public async Task<IActionResult> Editar(int id)
@@ -130,6 +128,50 @@ namespace Sarap.Controllers
 
             ModelState.AddModelError("", "No se pudo eliminar el producto.");
             return View(producto);
+        }
+
+        // Activar producto
+        public async Task<IActionResult> Activar(int id)
+        {
+            var productos = await _repository.ReadAsync();
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
+
+            if (producto == null)
+            {
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            producto.Activo = true;
+            var resultado = await _repository.UpdateAsync(producto);
+
+            TempData["Mensaje"] = resultado
+                ? "Producto activado correctamente."
+                : "No se pudo activar el producto.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Desactivar producto
+        public async Task<IActionResult> Desactivar(int id)
+        {
+            var productos = await _repository.ReadAsync();
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
+
+            if (producto == null)
+            {
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            producto.Activo = false;
+            var resultado = await _repository.UpdateAsync(producto);
+
+            TempData["Mensaje"] = resultado
+                ? "Producto desactivado correctamente."
+                : "No se pudo desactivar el producto.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

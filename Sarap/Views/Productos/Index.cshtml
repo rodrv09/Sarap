@@ -5,35 +5,35 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid px-4 py-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0 text-primary">
-            <i class="fas fa-boxes me-2"></i>Registro de Productos
-        </h2>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
-            <i class="fas fa-plus me-2"></i>Agregar Producto
-        </button>
+<h2 class="mb-4 text-dark">Registro de Productos</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
 
-    @if (TempData["Mensaje"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            @TempData["Mensaje"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+<div class="mb-3">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+        <i class="fas fa-plus"></i> Agregar Producto
+    </button>
+</div>
+
+ 
+
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>Listado de productos</h5>
         </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-    }
-
-    <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -68,16 +68,16 @@
                                     <td class="text-end">@producto.Cantidad.ToString("N2")</td>
                                     <td class="text-end">@producto.Precio.ToString("C")</td>
                                     <td>@producto.ProveedorID</td>
-                                    <td class="text-center">
-                                        @if (producto.Activo == true)
-                                        {
-                                            <span class="badge bg-success bg-opacity-10 text-success">Sí</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">No</span>
-                                        }
-                                    </td>
+                                <td class="text-center">
+                                    @if (producto.Activo == true)
+                                    {
+                                        <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i>Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary rounded-pill"><i class="fas fa-times-circle me-1"></i>Inactivo</span>
+                                    }
+                                </td>
                                     <td class="text-center">@producto.StockMinimo</td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex justify-content-end gap-2">
@@ -86,11 +86,23 @@
                                                     title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <a class="btn btn-sm btn-outline-danger"
-                                               href="@Url.Action("Eliminar", "Productos", new { id = producto.ProductoID })"
-                                               title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
+
+                                        @if (producto.Activo == true)
+                                        {
+                                            <a class="btn btn-sm btn-outline-warning"
+                                               href="@Url.Action("Desactivar", "Productos", new { id = producto.ProductoID })"
+                                               title="Desactivar producto">
+                                                <i class="fas fa-toggle-on"></i> 
                                             </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-sm btn-outline-success"
+                                               href="@Url.Action("Activar", "Productos", new { id = producto.ProductoID })"
+                                               title="Activar producto">
+                                                <i class="fas fa-toggle-off"></i> 
+                                            </a>
+                                        }
                                         </div>
                                     </td>
                                 </tr>
@@ -177,10 +189,7 @@
                         </select>
                     </div>
 
-                    <div class="mb-3 form-check form-switch">
-                        <input type="checkbox" class="form-check-input" id="ActivoCrear" name="Activo" checked />
-                        <label class="form-check-label" for="ActivoCrear">Activo</label>
-                    </div>
+                   
                     <div class="mb-3">
                         <label for="StockMinimoCrear" class="form-label">Stock Mínimo</label>
                         <input type="number" class="form-control" id="StockMinimoCrear" name="StockMinimo" />

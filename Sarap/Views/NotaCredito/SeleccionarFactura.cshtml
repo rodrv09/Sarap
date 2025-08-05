@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Factura>
+
+@{
+    ViewBag.Title = "Seleccionar Factura para Nota de Crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-primary">
+            <i class="fas fa-file-invoice me-2"></i>@ViewBag.Title
+        </h2>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Facturas recientes</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Factura #</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-end">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var factura in Model)
+                            {
+                                <tr>
+                                    <td>@factura.FacturaID</td>
+                                    <td>@factura.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>@factura.ClienteNombre</td>
+                                    <td class="text-end">@factura.Total.ToString("C")</td>
+                                    <td class="text-end">
+                                        <a href="@Url.Action("Crear", "NotaCredito", new { facturaId = factura.FacturaID })"
+                                           class="btn btn-sm btn-success">
+                                            Crear Nota
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    No hay facturas recientes disponibles para crear nota de crédito
+                </div>
+            }
+        </div>
+    </div>
+</div>

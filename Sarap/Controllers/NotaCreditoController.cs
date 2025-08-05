@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sarap.Models;
-using System.Linq;
-using System;
 
 namespace Sarap.Controllers
 {
@@ -20,36 +18,48 @@ namespace Sarap.Controllers
             var notas = _context.NotaCredito
                 .OrderByDescending(n => n.Fecha)
                 .ToList();
+
             return View(notas);
         }
 
-        // GET: NotaCredito/Crear
-        public IActionResult Crear()
+        // GET: NotaCredito/SeleccionarFactura
+        public IActionResult SeleccionarFactura()
         {
-            // Redirigir a selección de factura o mostrar formulario con selector
-            return RedirectToAction("Index", "Facturas"); // Asumiendo que hay un controlador de facturas
+            var facturas = _context.Facturas
+                .Where(f => f.Fecha >= DateTime.Now.AddDays(-30))
+                .OrderByDescending(f => f.Fecha)
+                .ToList();
+
+            return View(facturas);
         }
 
-        // GET: NotaCredito/Crear/{facturaId}
-        public IActionResult CrearParaFactura(int facturaId)
+        // GET: NotaCredito/Crear?facturaId=5
+        // GET: /NotaCredito/Crear?facturaId=123
+        [HttpGet]
+        public IActionResult Crear(int facturaId)
         {
-            var factura = _context.Facturas.FirstOrDefault(f => f.FacturaID == facturaId);
+            // 1. Validar que la factura exista
+            var factura = _context.Facturas
+                .FirstOrDefault(f => f.FacturaID == facturaId);
+
             if (factura == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "La factura seleccionada no existe";
+                return RedirectToAction("SeleccionarFactura");
             }
 
-            ViewBag.FacturaNumero = factura.FacturaID;
-            ViewBag.FacturaCliente = factura.ClienteNombre;
-            ViewBag.FacturaTotal = factura.Total;
-
-            var nota = new NotaCredito
+            // 2. Crear el modelo inicial
+            var modelo = new NotaCredito
             {
-                FacturaID = factura.FacturaID,
-                Fecha = DateTime.Now // Establecer fecha actual por defecto
+                FacturaID = facturaId,
+                Fecha = DateTime.Now,
+                Monto = factura.Total // Puedes poner el total o dejar 0 para que lo modifiquen
             };
 
-            return View("Crear", nota);
+            // 3. Pasar datos adicionales a la vista
+            ViewBag.Factura = factura; // Para mostrar detalles de la factura
+
+            return View(modelo); // Renderiza Views/NotaCredito/Crear.cshtml
         }
 
         // POST: NotaCredito/CrearNotaCredito
@@ -63,22 +73,23 @@ namespace Sarap.Controllers
                 {
                     _context.NotaCredito.Add(nota);
                     _context.SaveChanges();
-                    TempData["SuccessMessage"] = "Nota de crédito creada exitosamente.";
+
+                    TempData["SuccessMessage"] = $"Nota de crédito #{nota.NotaCreditoID} creada correctamente";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Ocurrió un error al guardar la nota de crédito: " + ex.Message);
+                    ModelState.AddModelError("", $"Error al crear la nota de crédito: {ex.Message}");
                 }
             }
 
-            // Recargar datos de la factura si hay error
             var factura = _context.Facturas.FirstOrDefault(f => f.FacturaID == nota.FacturaID);
             if (factura != null)
             {
                 ViewBag.FacturaNumero = factura.FacturaID;
                 ViewBag.FacturaCliente = factura.ClienteNombre;
                 ViewBag.FacturaTotal = factura.Total;
+                ViewBag.FacturaInfo = factura;
             }
 
             return View("Crear", nota);
@@ -93,9 +104,7 @@ namespace Sarap.Controllers
                 return NotFound();
             }
 
-            // Cargar información relacionada si es necesario
             ViewBag.Factura = _context.Facturas.FirstOrDefault(f => f.FacturaID == nota.FacturaID);
-
             return View(nota);
         }
 
@@ -108,9 +117,8 @@ namespace Sarap.Controllers
                 return NotFound();
             }
 
-            // Configurar vista para impresión
             ViewBag.Factura = _context.Facturas.FirstOrDefault(f => f.FacturaID == nota.FacturaID);
-            return View("Detalle", nota); // Reutilizar vista de detalle o crear una específica para impresión
+            return View("Detalle", nota); // o una vista personalizada para impresión
         }
     }
 }

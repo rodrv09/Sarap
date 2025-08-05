@@ -6,6 +6,7 @@
 }
 
 <div class="container-fluid px-4 py-4">
+    <!-- Mensaje de éxito -->
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -16,16 +17,16 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="m-0 text-primary">
-            <i class="fas fa-file-invoice-dollar me-2"></i>Notas de Crédito
+            <i class="fas fa-file-invoice-dollar me-2"></i>@ViewBag.Title
         </h2>
-        <a href="@Url.Action("Crear")" class="btn btn-success">
+        <a href="@Url.Action("SeleccionarFactura", "NotaCredito")" class="btn btn-success">
             <i class="fas fa-plus-circle me-2"></i>Nueva Nota
         </a>
     </div>
 
     <div class="card border-0 shadow-lg">
         <div class="card-header bg-primary text-white py-3">
-            <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>Listado Notas de Crédito</h5>
+            <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>Listado de Notas de Crédito</h5>
         </div>
         <div class="card-body p-0">
             @if (Model.Any())
@@ -55,11 +56,11 @@
                                     </td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex justify-content-end gap-2">
-                                            <a href="@Url.Action("Detalle", new { id = nota.NotaCreditoID })"
+                                            <a href="@Url.Action("Detalle", "NotaCredito", new { id = nota.NotaCreditoID })"
                                                class="btn btn-sm btn-outline-primary" title="Ver Detalle">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Imprimir", new { id = nota.NotaCreditoID })" target="_blank"
+                                            <a href="@Url.Action("Imprimir", "NotaCredito", new { id = nota.NotaCreditoID })" target="_blank"
                                                class="btn btn-sm btn-outline-secondary" title="Imprimir">
                                                 <i class="fas fa-print"></i>
                                             </a>

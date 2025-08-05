@@ -1,11 +1,19 @@
 ﻿@model NotaCredito
-
 @{
     ViewBag.Title = "Crear Nota de Crédito";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var factura = ViewBag.FacturaInfo as Factura;
+    var factura = ViewBag.Factura as Factura; // ← Cambiado de FacturaInfo a Factura
 }
+
+@if (factura == null)
+{
+    <div class="alert alert-danger">
+        No se encontró información de la factura.
+    </div>
+    return; // Detiene el renderizado
+}
+
 
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -41,7 +49,7 @@
             <h5 class="mb-0">Datos de la Nota de Crédito</h5>
         </div>
         <div class="card-body">
-            <form asp-action="Crear">
+            <form asp-action="CrearNotaCredito">
                 <input type="hidden" asp-for="FacturaID" />
 
                 <div class="row mb-3">

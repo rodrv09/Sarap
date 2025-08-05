@@ -65,15 +65,7 @@
                                     <td class="text-end">@producto.Cantidad.ToString("N2")</td>
                                     <td class="text-end">@producto.Precio.ToString("C")</td>
                                     <td>@producto.ProveedorID</td>
-                                    <td class="text-center">
-                                        @if (producto.Activo)
-                                        {
-                                            <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i>Activo</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-pill"><i class="fas fa-times-circle me-1"></i>Inactivo</span>
-                                        }
+                                    <td class="text-center">                                     
                                     </td>
                                     <td class="text-center">@producto.StockMinimo</td>
                                     <td class="text-end pe-4">

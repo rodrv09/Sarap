@@ -1,0 +1,38 @@
+﻿@model Sarap.Models.CambiarContraseñaViewModel
+
+@{
+    ViewData["Title"] = "Cambiar Contraseña";
+}
+
+<h2 class="mb-4">Cambiar Contraseña</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+<form asp-action="CambiarContraseña" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="ContraseñaActual"></label>
+        <input asp-for="ContraseñaActual" class="form-control" />
+        <span asp-validation-for="ContraseñaActual" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="NuevaContraseña"></label>
+        <input asp-for="NuevaContraseña" class="form-control" />
+        <span asp-validation-for="NuevaContraseña" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ConfirmarContraseña"></label>
+        <input asp-for="ConfirmarContraseña" class="form-control" />
+        <span asp-validation-for="ConfirmarContraseña" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,42 @@
+﻿@model RegistroViewModel
+
+@{
+    ViewData["Title"] = "Mi Cuenta";
+    ViewData["OcultarBarraLateral"] = false;
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4" style="max-width:600px; margin:auto;">
+        <h3 class="text-center mb-4">Información de la cuenta</h3>
+
+        <div class="mb-3">
+            <strong>Nombre:</strong> @Model.Nombre
+        </div>
+
+        <div class="mb-3">
+            <strong>Apellido:</strong> @Model.Apellido
+        </div>
+
+        <div class="mb-3">
+            <strong>Nombre de Usuario:</strong> @Model.NombreUsuario
+        </div>
+
+        <div class="mb-3">
+            <strong>Correo Electrónico:</strong> @Model.Email
+        </div>
+
+        <div class="mb-3">
+            <strong>Teléfono:</strong> @Model.Telefono
+        </div>
+
+        <div class="text-center mt-4">
+
+            <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Cerrar sesión</a>
+
+            <a href="@Url.Action("CambiarContraseña", "Usuarios")" class="btn btn-warning">
+                <i class="fas fa-key"></i> Cambiar Contraseña
+            </a>
+
+        </div>
+    </div>
+</div>

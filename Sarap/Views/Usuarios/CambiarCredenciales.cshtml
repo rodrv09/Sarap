@@ -1,8 +1,9 @@
 ﻿@model Sarap.Models.CambiarCredencialesViewModel
 
 @{
-    ViewData["Title"] = "Cambiar Correo y Contraseña";
+    ViewData["Title"] = "Cambiar contraseña";
     ViewData["OcultarBarraLateral"] = true;
+    ViewData["OcultarNavbar"] = true;
 }
 
 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
@@ -72,6 +73,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <div class="card-footer text-center bg-light">
+            ¿Descartar cambios? <a asp-action="Login" asp-controller="Account">Volver</a>
+        </div>
     </form>
 </div>
 

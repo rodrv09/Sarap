@@ -58,6 +58,17 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        Response.Headers["Pragma"] = "no-cache";
+        Response.Headers["Expires"] = "0";
+
+        return RedirectToAction("Login");
+    }
+    [HttpGet]
     public IActionResult Login()
     {
         return View();
@@ -100,5 +111,37 @@ public class AccountController : Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         return RedirectToAction("Index", "Home");
+    }
+    [HttpGet]
+    public async Task<IActionResult> Cuenta()
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            // Si no está logueado, lo redirigimos al login
+            return RedirectToAction("Login");
+        }
+
+        // Obtenemos el nombre de usuario actual desde los claims
+        var nombreUsuario = User.Identity.Name;
+
+        // Buscamos el usuario en la base de datos
+        var usuario = await _usuarioRepo.GetByUsernameAsync(nombreUsuario);
+
+        if (usuario == null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        // Mapeamos a tu ViewModel
+        var model = new RegistroViewModel
+        {
+            Nombre = usuario.Nombre,
+            Apellido = usuario.Apellido,
+            NombreUsuario = usuario.NombreUsuario,
+            Email = usuario.Email,
+            Telefono = usuario.Telefono
+        };
+
+        return View(model);
     }
 }

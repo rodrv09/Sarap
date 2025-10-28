@@ -2,17 +2,8 @@
 
 namespace Sarap.Models
 {
-    public class CambiarCredencialesViewModel
+    public class CambiarContraseñaViewModel
     {
-        [Required(ErrorMessage = "Debe ingresar el nombre de usuario.")]
-        [Display(Name = "Nombre de Usuario")]
-        public string NombreUsuario { get; set; } = null!;
-
-        [Required(ErrorMessage = "El correo es obligatorio.")]
-        [EmailAddress(ErrorMessage = "Debe ingresar un correo electrónico válido.")]
-        [Display(Name = "Correo Electrónico")]
-        public string NuevoEmail { get; set; } = null!;
-
         [Required(ErrorMessage = "Debe ingresar la contraseña actual.")]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña Actual")]

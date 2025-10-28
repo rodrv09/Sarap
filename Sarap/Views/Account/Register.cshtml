@@ -1,8 +1,10 @@
 ﻿@model RegistroViewModel
 
 @{
+
     ViewData["Title"] = "Registro de Usuario";
     ViewData["OcultarBarraLateral"] = true;
+    ViewData["OcultarNavbar"] = true;
 }
 
 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
@@ -76,6 +78,10 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Registrarse</button>
+        <div class="card-footer text-center bg-light">
+            ¿Ya tienes una cuenta? <a asp-action="Login" asp-controller="Account">Iniciar sesión</a>
+        </div>
+        
     </form>
 </div>
 

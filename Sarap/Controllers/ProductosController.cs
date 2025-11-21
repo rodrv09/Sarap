@@ -74,7 +74,7 @@ namespace Sarap.Controllers
             if (producto == null)
                 return NotFound();
 
-            return View(producto);
+            return Json(producto);
         }
 
         // Guardar cambios en la edición
@@ -83,8 +83,10 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Editar(Producto producto)
         {
             if (!ModelState.IsValid)
-                return View(producto);
-
+            {
+                TempData["Error"] = "Hay errores en los datos.";
+                return RedirectToAction(nameof(Index));
+            }
             var actualizado = await _repository.UpdateAsync(producto);
             if (actualizado)
             {
@@ -92,8 +94,8 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError("", "No se pudo actualizar el producto.");
-            return View(producto);
+            TempData["Error"] = "No se pudo actualizar el producto.";
+            return RedirectToAction(nameof(Index));
         }
 
         // Confirmación para eliminar

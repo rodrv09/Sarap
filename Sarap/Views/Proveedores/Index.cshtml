@@ -2,13 +2,15 @@
 
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0">
-            <i class="fas fa-truck me-2"></i>Registro de Proveedores
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-truck me-2"></i>Gestión de Proveedores
         </h2>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProveedorModal">
-            <i class="fas fa-plus-circle me-1"></i> Nuevo Proveedor
+            <i class="fas fa-plus-circle me-1"></i>Nuevo Proveedor
         </button>
     </div>
+
+
 
     <!-- Alertas -->
     @if (TempData["Mensaje"] != null)
@@ -33,7 +35,7 @@
     <div class="card border-0 shadow-lg">
         <div class="card-header bg-primary text-white py-3">
             <h5 class="m-0">
-                <i class="fas fa-list-alt me-2"></i>Listado de Proveedores
+                <i class="fas fa-list-alt me-2"></i>Proveedores
             </h5>
         </div>
         <div class="card-body p-0">

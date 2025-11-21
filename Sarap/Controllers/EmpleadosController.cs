@@ -38,11 +38,17 @@ namespace Sarap.Controllers
             return View(empleados.ToList());
         }
 
+        public IActionResult Crear()
+        {
+            return View();
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Empleado empleado)
         {
+
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Por favor corrige los errores del formulario.";
@@ -73,8 +79,13 @@ namespace Sarap.Controllers
             }
             catch (Exception ex)
             {
-                var mensaje = ex.InnerException?.Message ?? ex.Message;
-                TempData["Error"] = $"Excepción: {mensaje}";
+                var real = ex;
+
+                // bajar hasta llegar al mensaje real
+                while (real.InnerException != null)
+                    real = real.InnerException;
+
+                TempData["Error"] = "Excepción real: " + real.Message;
                 return RedirectToAction(nameof(Index));
             }
 

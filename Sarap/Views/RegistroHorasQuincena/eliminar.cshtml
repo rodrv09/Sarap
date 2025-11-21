@@ -1,0 +1,39 @@
+﻿@model Sarap.Models.RegistroHorasQuincena
+
+@{
+    ViewBag.Title = "Eliminar Registro de Horas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-dark">Eliminar Registro de Horas</h2>
+
+<div class="card p-4">
+    <h4>¿Estás seguro de que deseas eliminar este registro?</h4>
+    <dl class="row mt-3">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">Identidad</dt>
+        <dd class="col-sm-9">@Model.Identidad</dd>
+
+        <dt class="col-sm-3">Fecha Inicio</dt>
+        <dd class="col-sm-9">@Model.FechaInicio?.ToString("yyyy-MM-dd")</dd>
+
+        <dt class="col-sm-3">Fecha Fin</dt>
+        <dd class="col-sm-9">@Model.FechaFin?.ToString("yyyy-MM-dd")</dd>
+
+        <dt class="col-sm-3">Horas Ordinarias</dt>
+        <dd class="col-sm-9">@Model.HorasOrdinarias</dd>
+
+        <dt class="col-sm-3">Fecha Registro</dt>
+        <dd class="col-sm-9">@Model.FechaRegistro.ToString("yyyy-MM-dd")</dd>
+    </dl>
+
+    <form asp-action="Eliminar" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-start mt-3">
+            <a asp-action="Index" class="btn btn-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </div>
+    </form>
+</div>

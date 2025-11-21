@@ -5,160 +5,293 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4 text-dark">Registro de Horas Quincena</h2>
-
-@if (TempData["Mensaje"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Mensaje"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-primary">
+            <i class="fas fa-clock me-2"></i>Registro de Horas Quincena
+        </h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarRegistroModal">
+            <i class="fas fa-plus-circle me-2"></i>Agregar Registro
+        </button>
     </div>
-}
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="mb-3">
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarRegistroModal">
-        <i class="fas fa-plus"></i> Agregar Registro
-    </button>
-</div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="card shadow-sm" style="background: white;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover w-100 mb-0">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>Id</th>
-                        <th>Identidad</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Horas Ordinarias</th>
-                        <th>Horas Incapacidad</th>
-                        <th>Horas Vacaciones</th>
-                        <th>Horas Feriado Ley</th>
-                        <th>Horas Extra 15%</th>
-                        <th>Horas Extra 20%</th>
-                        <th>Horas Permiso Sin Goce</th>
-                        <th>Fecha Registro</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var registro in Model)
-                        {
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>Listado de horas</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-center">
                             <tr>
-                                <td>@registro.Id</td>
-                                <td>@registro.Identidad</td>
-                                <td>@registro.FechaInicio?.ToString("yyyy-MM-dd")</td>
-                                <td>@registro.FechaFin?.ToString("yyyy-MM-dd")</td>
-                                <td>@registro.HorasOrdinarias</td>
-                                <td>@registro.HorasIncapacidad</td>
-                                <td>@registro.HorasVacaciones</td>
-                                <td>@registro.HorasFeriadoLey</td>
-                                <td>@registro.HorasExtra15</td>
-                                <td>@registro.HorasExtra20</td>
-                                <td>@registro.HorasPermisoSinGoce</td>
-                                <td>@registro.FechaRegistro.ToString("yyyy-MM-dd")</td>
-                                <td class="text-center">
-                                    <a class="btn btn-sm btn-outline-warning me-1" href="@Url.Action("Editar", "RegistroHorasQuincena", new { id = registro.Id })" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Eliminar", "RegistroHorasQuincena", new { id = registro.Id })" title="Eliminar">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
+
+                                <th>Identidad Empleado</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Horas Ordinarias</th>
+                                <th>Horas Incapacidad</th>
+                                <th>Horas Vacaciones</th>
+                                <th>Horas Feriado Ley</th>
+                                <th>Extra 15%</th>
+                                <th>Extra 20%</th>
+                                <th>Permiso Sin Goce</th>
+                                <th>Fecha Registro</th>
+                                <th class="text-end pe-4">Acciones</th>
                             </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="13" class="text-center text-muted">No hay registros de horas.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody class="text-center">
+                            @foreach (var registro in Model)
+                            {
+                                <tr>
+                  
+                                    <td>@registro.Identidad</td>
+                                    <td>@registro.FechaInicio?.ToString("yyyy-MM-dd")</td>
+                                    <td>@registro.FechaFin?.ToString("yyyy-MM-dd")</td>
+                                    <td>@registro.HorasOrdinarias</td>
+                                    <td>@registro.HorasIncapacidad</td>
+                                    <td>@registro.HorasVacaciones</td>
+                                    <td>@registro.HorasFeriadoLey</td>
+                                    <td>@registro.HorasExtra15</td>
+                                    <td>@registro.HorasExtra20</td>
+                                    <td>@registro.HorasPermisoSinGoce</td>
+                                    <td>@registro.FechaRegistro.ToString("yyyy-MM-dd")</td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-warning btnEditarRegistro"
+                                                    data-registro='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(registro))'
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Eliminar", "RegistroHorasQuincena", new { id = registro.Id })" title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay registros de horas</h5>
+                    <p class="text-muted">Utilice el botón "Agregar Registro" para crear uno</p>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 <!-- Modal Crear Registro -->
 <div class="modal fade" id="agregarRegistroModal" tabindex="-1" aria-labelledby="agregarRegistroModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
             <form asp-action="Crear" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agregarRegistroModalLabel">Agregar Registro de Horas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-semibold" id="agregarRegistroModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Agregar Registro de Horas
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="IdentidadCrear" class="form-label">Identidad</label>
-                        <select class="form-select" id="Identidad" name="Identidad" required>
-                            <option value="" selected disabled>-- Seleccione Identidad --</option>
-                            @foreach (var emp in ViewBag.Empleados)
-                            {
-                                <option value="@emp.Identidad">@emp.NombreCompleto (@emp.Identidad)</option>
-                            }
-                        </select>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Identidad</label>
+                            <select class="form-select" name="Identidad" required>
+                                <option value="" selected disabled>-- Seleccione Identidad --</option>
+                                @foreach (var emp in ViewBag.Empleados)
+                                {
+                                    <option value="@emp.Identidad">@emp.NombreCompleto (@emp.Identidad)</option>
+                                }
+                            </select>
+                        </div>
 
-                    </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" name="FechaInicio" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" name="FechaFin" required />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="FechaInicio" class="form-label">Fecha Inicio</label>
-                        <input type="date" class="form-control" id="FechaInicio" name="FechaInicio" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="FechaFin" class="form-label">Fecha Fin</label>
-                        <input type="date" class="form-control" id="FechaFin" name="FechaFin" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasOrdinarias" class="form-label">Horas Ordinarias</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasOrdinarias" name="HorasOrdinarias" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasIncapacidad" class="form-label">Horas Incapacidad</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasIncapacidad" name="HorasIncapacidad" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasVacaciones" class="form-label">Horas Vacaciones</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasVacaciones" name="HorasVacaciones" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasFeriadoLey" class="form-label">Horas Feriado Ley</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasFeriadoLey" name="HorasFeriadoLey" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasExtra15" class="form-label">Horas Extra 15%</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasExtra15" name="HorasExtra15" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasExtra20" class="form-label">Horas Extra 20%</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasExtra20" name="HorasExtra20" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="HorasPermisoSinGoce" class="form-label">Horas Permiso Sin Goce</label>
-                        <input type="number" step="0.01" class="form-control" id="HorasPermisoSinGoce" name="HorasPermisoSinGoce" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="FechaRegistro" class="form-label">Fecha Registro</label>
-                        <input type="date" class="form-control" id="FechaRegistro" name="FechaRegistro" required />
+                        <div class="col-md-4">
+                            <label class="form-label">Horas Ordinarias</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasOrdinarias" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Incapacidad</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasIncapacidad" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Vacaciones</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasVacaciones" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Feriado Ley</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasFeriadoLey" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Extra 15%</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasExtra15" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Extra 20%</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasExtra20" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Permiso Sin Goce</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasPermisoSinGoce" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Registro</label>
+                            <input type="date" class="form-control" name="FechaRegistro" required />
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal Editar Registro -->
+<div class="modal fade" id="editarRegistroModal" tabindex="-1" aria-labelledby="editarRegistroModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <form id="formEditarRegistro" asp-action="Editar" method="post">
+                <input type="hidden" name="Id" id="editarId" />
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title fw-semibold" id="editarRegistroModalLabel">
+                        <i class="fas fa-edit me-2"></i>Editar Registro de Horas
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Identidad</label>
+                            <select class="form-select" name="Identidad" id="editarIdentidad" required>
+                                <option value="" selected disabled>-- Seleccione Identidad --</option>
+                                @foreach (var emp in ViewBag.Empleados)
+                                {
+                                    <option value="@emp.Identidad">@emp.NombreCompleto (@emp.Identidad)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" name="FechaInicio" id="editarFechaInicio" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" name="FechaFin" id="editarFechaFin" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Horas Ordinarias</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasOrdinarias" id="editarHorasOrdinarias" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Incapacidad</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasIncapacidad" id="editarHorasIncapacidad" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Vacaciones</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasVacaciones" id="editarHorasVacaciones" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Feriado Ley</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasFeriadoLey" id="editarHorasFeriadoLey" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Extra 15%</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasExtra15" id="editarHorasExtra15" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Extra 20%</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasExtra20" id="editarHorasExtra20" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Permiso Sin Goce</label>
+                            <input type="number" step="0.01" class="form-control" name="HorasPermisoSinGoce" id="editarHorasPermisoSinGoce" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Registro</label>
+                            <input type="date" class="form-control" name="FechaRegistro" id="editarFechaRegistro" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i>Actualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalEditarRegistro = new bootstrap.Modal(document.getElementById('editarRegistroModal'));
+
+            document.querySelectorAll('.btnEditarRegistro').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const registro = JSON.parse(this.getAttribute('data-registro'));
+
+                    document.getElementById('editarId').value = registro.Id;
+                    document.getElementById('editarIdentidad').value = registro.Identidad;
+                    document.getElementById('editarFechaInicio').value = registro.FechaInicio?.split('T')[0] ?? '';
+                    document.getElementById('editarFechaFin').value = registro.FechaFin?.split('T')[0] ?? '';
+                    document.getElementById('editarHorasOrdinarias').value = registro.HorasOrdinarias ?? '';
+                    document.getElementById('editarHorasIncapacidad').value = registro.HorasIncapacidad ?? '';
+                    document.getElementById('editarHorasVacaciones').value = registro.HorasVacaciones ?? '';
+                    document.getElementById('editarHorasFeriadoLey').value = registro.HorasFeriadoLey ?? '';
+                    document.getElementById('editarHorasExtra15').value = registro.HorasExtra15 ?? '';
+                    document.getElementById('editarHorasExtra20').value = registro.HorasExtra20 ?? '';
+                    document.getElementById('editarHorasPermisoSinGoce').value = registro.HorasPermisoSinGoce ?? '';
+                    document.getElementById('editarFechaRegistro').value = registro.FechaRegistro?.split('T')[0] ?? '';
+
+                    modalEditarRegistro.show();
+                });
+            });
+        });
+    </script>
+}
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+</style>

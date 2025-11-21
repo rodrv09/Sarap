@@ -33,6 +33,8 @@ namespace Sarap.Controllers
             if (!ModelState.IsValid)
                 return View(proveedor);
 
+            proveedor.Activo = true; // Al crear, se activa por defecto
+
             var creado = await _repository.CreateAsync(proveedor);
             if (creado)
             {
@@ -103,6 +105,50 @@ namespace Sarap.Controllers
 
             ModelState.AddModelError("", "No se pudo eliminar el proveedor.");
             return View(proveedor);
+        }
+
+        // Activar proveedor
+        public async Task<IActionResult> Activar(int id)
+        {
+            var proveedores = await _repository.ReadAsync();
+            var proveedor = proveedores.FirstOrDefault(p => p.ProveedorId == id);
+
+            if (proveedor == null)
+            {
+                TempData["Error"] = "Proveedor no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            proveedor.Activo = true;
+            var actualizado = await _repository.UpdateAsync(proveedor);
+
+            TempData["Mensaje"] = actualizado
+                ? "Proveedor activado correctamente."
+                : "No se pudo activar el proveedor.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Desactivar proveedor
+        public async Task<IActionResult> Desactivar(int id)
+        {
+            var proveedores = await _repository.ReadAsync();
+            var proveedor = proveedores.FirstOrDefault(p => p.ProveedorId == id);
+
+            if (proveedor == null)
+            {
+                TempData["Error"] = "Proveedor no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            proveedor.Activo = false;
+            var actualizado = await _repository.UpdateAsync(proveedor);
+
+            TempData["Mensaje"] = actualizado
+                ? "Proveedor desactivado correctamente."
+                : "No se pudo desactivar el proveedor.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

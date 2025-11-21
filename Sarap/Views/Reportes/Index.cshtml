@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Reportes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-primary">
+            <i class="fas fa-chart-bar me-2"></i>Reportes Generales
+        </h2>
+    </div>
+
+    <div class="row g-4">
+        <!-- Clientes -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-friends fa-2x text-primary mb-3"></i>
+                    <h5 class="card-title text-primary">@ViewBag.TotalClientes</h5>
+                    <p class="text-muted mb-3">Total de clientes registrados.</p>
+                    <a asp-controller="Reportes" asp-action="ExportarExcelClientes" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fas fa-file-excel me-2"></i>Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proveedores -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-truck fa-2x text-success mb-3"></i>
+                    <h5 class="card-title text-success">@ViewBag.TotalProveedores</h5>
+                    <p class="text-muted mb-3">Total de proveedores registrados.</p>
+                    <a asp-controller="Reportes" asp-action="ExportarExcelProveedores" class="btn btn-outline-success btn-sm" target="_blank">
+                        <i class="fas fa-file-excel me-2"></i>Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usuarios -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users-cog fa-2x text-info mb-3"></i>
+                    <h5 class="card-title text-info">@ViewBag.TotalUsuarios</h5>
+                    <p class="text-muted mb-3">Total de usuarios registrados.</p>
+                    <a asp-controller="Reportes" asp-action="ExportarExcelUsuarios" class="btn btn-outline-info btn-sm" target="_blank">
+                        <i class="fas fa-file-excel me-2"></i>Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Facturas -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-invoice-dollar fa-2x text-danger mb-3"></i>
+                    <h5 class="card-title text-danger">@ViewBag.TotalFacturas</h5>
+                    <p class="text-muted mb-3">Total de facturas registradas.</p>
+                    <a asp-controller="Reportes" asp-action="ExportarExcelFacturas" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <i class="fas fa-file-excel me-2"></i>Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

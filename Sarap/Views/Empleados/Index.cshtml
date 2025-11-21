@@ -5,217 +5,324 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4 text-dark">Registro de Empleados</h2>
-
-@if (TempData["Mensaje"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Mensaje"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-users me-2"></i>Registro de Empleados
+        </h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
+            <i class="fas fa-user-plus me-2"></i>Nuevo Empleado
+        </button>
     </div>
-}
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-2"></i>
+                <div>@TempData["Mensaje"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="mb-3">
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
-        <i class="fas fa-plus"></i> Agregar Empleado
-    </button>
-</div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <div>@TempData["Error"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="card shadow-sm" style="background: white;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover w-100 mb-0">
-                <thead style="background-color: #2f3e4e; color: white;">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido Paterno</th>
-                        <th>Apellido Materno</th>
-                        <th>Identidad</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Dirección</th>
-                        <th>Fecha Contratación</th>
-                        <th>Días Vacaciones</th>
-                        <th>Salario Hora</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var empleado in Model)
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="card-title mb-0"><i class="fas fa-list-alt me-2"></i>Empleados</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Nombre Completo</th>
+                            <th>Identidad</th>
+                            <th>Contacto</th>
+                            <th>Contratación</th>
+                            <th class="text-center">Vacaciones</th>
+                            <th class="text-center">Salario/Hora</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var empleado in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-semibold">
+                                        @empleado.Nombre @empleado.ApellidoPaterno @empleado.ApellidoMaterno
+                                    </td>
+                                    <td>@empleado.Identidad</td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            @if (!string.IsNullOrEmpty(empleado.Email))
+                                            {
+                                                <a href="mailto:@empleado.Email" class="text-primary">@empleado.Email</a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(empleado.Telefono))
+                                            {
+                                                <a href="tel:@empleado.Telefono" class="text-primary">@empleado.Telefono</a>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @(empleado.FechaContratacion.HasValue? empleado.FechaContratacion.Value.ToString("dd/MM/yyyy") : "N/A")
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info rounded-pill">@empleado.DiasVacacionesDisponibles</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @empleado.SalarioHora.ToString("C2")
+                                    </td>
+                                    <td class="text-center">
+                                        @if (empleado.Activo)
+                                        {
+                                            <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i>Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill"><i class="fas fa-times-circle me-1"></i>Inactivo</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-sm btn-outline-primary btnEditarEmpleado"
+                                                    data-empleado='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(empleado))'
+                                                    title="Editar empleado">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            @if (empleado.Activo == true)
+                                            {
+                                                <a class="btn btn-sm btn-outline-warning"
+                                                   href="@Url.Action("Desactivar", "Empleados", new { id = empleado.Id })"
+                                                   title="Desactivar empleado">
+                                                    <i class="fas fa-toggle-on"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-sm btn-outline-success"
+                                                   href="@Url.Action("Activar", "Empleados", new { id = empleado.Id })"
+                                                   title="Activar empleado">
+                                                    <i class="fas fa-toggle-off"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@empleado.Nombre</td>
-                                <td>@empleado.ApellidoPaterno</td>
-                                <td>@empleado.ApellidoMaterno</td>
-                                <td>@empleado.Identidad</td>
-                                <td>@empleado.Email</td>
-                                <td>@empleado.Telefono</td>
-                                <td>@empleado.Direccion</td>
-                                <td>@(empleado.FechaContratacion.HasValue ? empleado.FechaContratacion.Value.ToString("yyyy-MM-dd") : "")</td>
-                                <td>@empleado.DiasVacacionesDisponibles</td>
-                                <td>@empleado.SalarioHora.ToString("N2")</td>
-                                <td>
-                                    @if (empleado.Activo)
-                                    {
-                                        <span class="badge bg-success">Activo</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Inactivo</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm btn-outline-warning me-1 btnEditarEmpleado"
-                                            data-empleado='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(empleado))'>
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>No hay empleados registrados
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="11" class="text-center text-muted">No hay empleados registrados.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL CREAR -->
+<!-- MODAL CREAR EMPLEADO -->
 <div class="modal fade" id="agregarEmpleadoModal" tabindex="-1" aria-labelledby="agregarEmpleadoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
             <form asp-action="Crear" asp-controller="Empleados" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agregarEmpleadoModalLabel">Agregar Empleado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="agregarEmpleadoModalLabel">
+                        <i class="fas fa-user-plus me-2"></i>Nuevo Empleado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="NombreCrear" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="NombreCrear" name="Nombre" required />
+                <div class="modal-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="NombreCrear" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" class="form-control" id="NombreCrear" name="Nombre" required
+                                       placeholder="Ingrese el nombre del empleado" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ApellidoPaternoCrear" class="form-label fw-semibold">Apellido Paterno</label>
+                                <input type="text" class="form-control" id="ApellidoPaternoCrear" name="ApellidoPaterno"
+                                       placeholder="Ingrese apellido paterno" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ApellidoMaternoCrear" class="form-label fw-semibold">Apellido Materno</label>
+                                <input type="text" class="form-control" id="ApellidoMaternoCrear" name="ApellidoMaterno"
+                                       placeholder="Ingrese apellido materno" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="IdentidadCrear" class="form-label fw-semibold">Identidad</label>
+                                <input type="text" class="form-control" id="IdentidadCrear" name="Identidad" required
+                                       placeholder="Ingrese número de identidad" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="EmailCrear" class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="EmailCrear" name="Email"
+                                       placeholder="ejemplo@dominio.com" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="TelefonoCrear" class="form-label fw-semibold">Teléfono</label>
+                                <input type="tel" class="form-control" id="TelefonoCrear" name="Telefono"
+                                       placeholder="Ingrese número telefónico" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="DireccionCrear" class="form-label fw-semibold">Dirección</label>
+                                <textarea class="form-control" id="DireccionCrear" name="Direccion" rows="2"
+                                          placeholder="Ingrese dirección completa"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="ApellidoPaternoCrear" class="form-label">Apellido Paterno</label>
-                        <input type="text" class="form-control" id="ApellidoPaternoCrear" name="ApellidoPaterno" />
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="FechaContratacionCrear" class="form-label fw-semibold">Fecha de Contratación</label>
+                                <input type="date" class="form-control" id="FechaContratacionCrear" name="FechaContratacion"
+                                       value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="DiasVacacionesCrear" class="form-label fw-semibold">Días Vacaciones</label>
+                                <input type="number" class="form-control" id="DiasVacacionesCrear" name="DiasVacacionesDisponibles" min="0"
+                                       placeholder="Días de vacaciones" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="SalarioHoraCrear" class="form-label fw-semibold">Salario por Hora</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" id="SalarioHoraCrear" name="SalarioHora"
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="ApellidoMaternoCrear" class="form-label">Apellido Materno</label>
-                        <input type="text" class="form-control" id="ApellidoMaternoCrear" name="ApellidoMaterno" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="IdentidadCrear" class="form-label">Identidad</label>
-                        <input type="text" class="form-control" id="IdentidadCrear" name="Identidad" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="EmailCrear" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="EmailCrear" name="Email" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="TelefonoCrear" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="TelefonoCrear" name="Telefono" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="DireccionCrear" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="DireccionCrear" name="Direccion" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="FechaContratacionCrear" class="form-label">Fecha de Contratación</label>
-                        <input type="date" class="form-control" id="FechaContratacionCrear" name="FechaContratacion" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="DiasVacacionesCrear" class="form-label">Días Vacaciones Disponibles</label>
-                        <input type="number" class="form-control" id="DiasVacacionesCrear" name="DiasVacacionesDisponibles" min="0" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="SalarioHoraCrear" class="form-label">Salario Hora</label>
-                        <input type="number" step="0.01" class="form-control" id="SalarioHoraCrear" name="SalarioHora" />
-                    </div>
+              
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Agregar</button>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Registrar Empleado
+                    </button>
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="ActivoCrear" name="Activo" value="true" checked />
-                    <label class="form-check-label" for="ActivoCrear">Activo</label>
-                </div>
-
             </form>
         </div>
     </div>
 </div>
 
-<!-- MODAL EDITAR -->
+<!-- MODAL EDITAR EMPLEADO -->
 <div class="modal fade" id="editarEmpleadoModal" tabindex="-1" aria-labelledby="editarEmpleadoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
             <form asp-action="Editar" asp-controller="Empleados" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarEmpleadoModalLabel">Editar Empleado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editarEmpleadoModalLabel">
+                        <i class="fas fa-user-edit me-2"></i>Editar Empleado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" id="EmpleadoId" name="EmpleadoId" />
+                <div class="modal-body p-4">
+                    <input type="hidden" id="Id" name="Id" />
 
-                    <div class="mb-3">
-                        <label for="Nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="Nombre" name="Nombre" required />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Nombre" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" class="form-control" id="Nombre" name="Nombre" required
+                                       placeholder="Ingrese el nombre del empleado" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ApellidoPaterno" class="form-label fw-semibold">Apellido Paterno</label>
+                                <input type="text" class="form-control" id="ApellidoPaterno" name="ApellidoPaterno"
+                                       placeholder="Ingrese apellido paterno" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ApellidoMaterno" class="form-label fw-semibold">Apellido Materno</label>
+                                <input type="text" class="form-control" id="ApellidoMaterno" name="ApellidoMaterno"
+                                       placeholder="Ingrese apellido materno" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Identidad" class="form-label fw-semibold">Identidad</label>
+                                <input type="text" class="form-control" id="Identidad" name="Identidad" required
+                                       placeholder="Ingrese número de identidad" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="Email" class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="Email" name="Email"
+                                       placeholder="ejemplo@dominio.com" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Telefono" class="form-label fw-semibold">Teléfono</label>
+                                <input type="tel" class="form-control" id="Telefono" name="Telefono"
+                                       placeholder="Ingrese número telefónico" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Direccion" class="form-label fw-semibold">Dirección</label>
+                                <textarea class="form-control" id="Direccion" name="Direccion" rows="2"
+                                          placeholder="Ingrese dirección completa"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="ApellidoPaterno" class="form-label">Apellido Paterno</label>
-                        <input type="text" class="form-control" id="ApellidoPaterno" name="ApellidoPaterno" />
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="FechaContratacion" class="form-label fw-semibold">Fecha de Contratación</label>
+                                <input type="date" class="form-control" id="FechaContratacion" name="FechaContratacion" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="DiasVacacionesDisponibles" class="form-label fw-semibold">Días Vacaciones</label>
+                                <input type="number" class="form-control" id="DiasVacacionesDisponibles" name="DiasVacacionesDisponibles" min="0"
+                                       placeholder="Días de vacaciones" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="SalarioHora" class="form-label fw-semibold">Salario por Hora</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" id="SalarioHora" name="SalarioHora"
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="ApellidoMaterno" class="form-label">Apellido Materno</label>
-                        <input type="text" class="form-control" id="ApellidoMaterno" name="ApellidoMaterno" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Identidad" class="form-label">Identidad</label>
-                        <input type="text" class="form-control" id="Identidad" name="Identidad" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="Email" name="Email" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Telefono" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="Telefono" name="Telefono" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Direccion" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="Direccion" name="Direccion" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="FechaContratacion" class="form-label">Fecha de Contratación</label>
-                        <input type="date" class="form-control" id="FechaContratacion" name="FechaContratacion" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="DiasVacacionesDisponibles" class="form-label">Días Vacaciones Disponibles</label>
-                        <input type="number" class="form-control" id="DiasVacacionesDisponibles" name="DiasVacacionesDisponibles" min="0" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="SalarioHora" class="form-label">Salario Hora</label>
-                        <input type="number" step="0.01" class="form-control" id="SalarioHora" name="SalarioHora" />
-                    </div>
+                  
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Guardar Cambios
+                    </button>
                 </div>
             </form>
         </div>
@@ -231,7 +338,7 @@
                 btn.addEventListener('click', function () {
                     const empleado = JSON.parse(this.getAttribute('data-empleado'));
 
-                    document.getElementById('EmpleadoId').value = empleado.Id;
+                    document.getElementById('Id').value = empleado.Id;
                     document.getElementById('Nombre').value = empleado.Nombre;
                     document.getElementById('ApellidoPaterno').value = empleado.ApellidoPaterno ?? '';
                     document.getElementById('ApellidoMaterno').value = empleado.ApellidoMaterno ?? '';
@@ -240,8 +347,9 @@
                     document.getElementById('Telefono').value = empleado.Telefono ?? '';
                     document.getElementById('Direccion').value = empleado.Direccion ?? '';
                     document.getElementById('FechaContratacion').value = empleado.FechaContratacion ? empleado.FechaContratacion.split('T')[0] : '';
-                    document.getElementById('DiasVacacionesDisponibles').value = empleado.DiasVacacionesDisponibles;
+                    document.getElementById('DiasVacacionesDisponibles').value = empleado.DiasVacacionesDisponibles ?? 0;
                     document.getElementById('SalarioHora').value = empleado.SalarioHora ?? 0;
+                    
 
                     modalEditar.show();
                 });

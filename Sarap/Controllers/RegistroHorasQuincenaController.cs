@@ -85,6 +85,8 @@ namespace Sarap.Controllers
 
 
         // GET: RegistroHorasQuincena/Editar/5
+        // Este no se ocupa si usas modal
+        /*
         public async Task<IActionResult> Editar(int id)
         {
             var registros = await _repository.ReadAsync();
@@ -93,8 +95,10 @@ namespace Sarap.Controllers
             if (registro == null)
                 return NotFound();
 
-            return View(registro);
+            return View(registro); // Esto es lo que provoca el error
         }
+        */
+
 
         // POST: RegistroHorasQuincena/Editar
         [HttpPost]
@@ -102,7 +106,10 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Editar(RegistroHorasQuincena registro)
         {
             if (!ModelState.IsValid)
-                return View(registro);
+            {
+                TempData["Error"] = "Hay errores en el formulario.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var actualizado = await _repository.UpdateAsync(registro);
             if (actualizado)
@@ -111,8 +118,8 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError("", "No se pudo actualizar el registro.");
-            return View(registro);
+            TempData["Error"] = "No se pudo actualizar el registro.";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: RegistroHorasQuincena/Eliminar/5

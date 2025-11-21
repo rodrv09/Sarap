@@ -9,21 +9,32 @@ namespace Sarap.Controllers
     public class ProductosController : Controller
     {
         private readonly ProductoRepository _repository;
+        private readonly CategoriaRepository _categoriaRepository;
+        private readonly ProveedorRepository _proveedorRepository;
 
         public ProductosController()
         {
             _repository = new ProductoRepository();
+            _categoriaRepository = new CategoriaRepository();
+            _proveedorRepository = new ProveedorRepository();
         }
 
         public async Task<IActionResult> Index()
         {
             var productos = await _repository.ReadAsync();
+            var categorias = await _categoriaRepository.ReadAsync();
+            var proveedores = await _proveedorRepository.ReadAsync();
+
+            ViewBag.Categorias = categorias.ToList();
+            ViewBag.Proveedores = proveedores.ToList();
+
             return View(productos.ToList());
         }
 
+        // Mostrar formulario para crear
         public IActionResult Crear()
         {
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -31,7 +42,17 @@ namespace Sarap.Controllers
         public async Task<IActionResult> Crear(Producto producto)
         {
             if (!ModelState.IsValid)
-                return View(producto);
+            {
+                var errores = ModelState.Values
+                                .SelectMany(v => v.Errors)
+                                .Select(e => e.ErrorMessage)
+                                .ToList();
+
+                TempData["Error"] = "Errores: " + string.Join(", ", errores);
+                return RedirectToAction(nameof(Index));
+            }
+
+            producto.Activo = true;
 
             var creado = await _repository.CreateAsync(producto);
             if (creado)
@@ -40,28 +61,32 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError("", "No se pudo crear el producto.");
-            return View(producto);
+            TempData["Error"] = "No se pudo crear el producto.";
+            return RedirectToAction(nameof(Index));
         }
 
+        // Mostrar formulario de edición
         public async Task<IActionResult> Editar(int id)
         {
             var productos = await _repository.ReadAsync();
-            var producto = productos.FirstOrDefault(p => p.ProductoId == id);
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
 
             if (producto == null)
                 return NotFound();
 
-            return View(producto);
+            return Json(producto);
         }
 
+        // Guardar cambios en la edición
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(Producto producto)
         {
             if (!ModelState.IsValid)
-                return View(producto);
-
+            {
+                TempData["Error"] = "Hay errores en los datos.";
+                return RedirectToAction(nameof(Index));
+            }
             var actualizado = await _repository.UpdateAsync(producto);
             if (actualizado)
             {
@@ -69,14 +94,15 @@ namespace Sarap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError("", "No se pudo actualizar el producto.");
-            return View(producto);
+            TempData["Error"] = "No se pudo actualizar el producto.";
+            return RedirectToAction(nameof(Index));
         }
 
+        // Confirmación para eliminar
         public async Task<IActionResult> Eliminar(int id)
         {
             var productos = await _repository.ReadAsync();
-            var producto = productos.FirstOrDefault(p => p.ProductoId == id);
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
 
             if (producto == null)
                 return NotFound();
@@ -84,12 +110,13 @@ namespace Sarap.Controllers
             return View(producto);
         }
 
+        // Eliminar definitivamente
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
             var productos = await _repository.ReadAsync();
-            var producto = productos.FirstOrDefault(p => p.ProductoId == id);
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
 
             if (producto == null)
                 return NotFound();
@@ -105,5 +132,48 @@ namespace Sarap.Controllers
             return View(producto);
         }
 
+        // Activar producto
+        public async Task<IActionResult> Activar(int id)
+        {
+            var productos = await _repository.ReadAsync();
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
+
+            if (producto == null)
+            {
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            producto.Activo = true;
+            var resultado = await _repository.UpdateAsync(producto);
+
+            TempData["Mensaje"] = resultado
+                ? "Producto activado correctamente."
+                : "No se pudo activar el producto.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Desactivar producto
+        public async Task<IActionResult> Desactivar(int id)
+        {
+            var productos = await _repository.ReadAsync();
+            var producto = productos.FirstOrDefault(p => p.ProductoID == id);
+
+            if (producto == null)
+            {
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            producto.Activo = false;
+            var resultado = await _repository.UpdateAsync(producto);
+
+            TempData["Mensaje"] = resultado
+                ? "Producto desactivado correctamente."
+                : "No se pudo desactivar el producto.";
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -139,8 +139,22 @@
                         <i class="fas fa-user-circle"></i> @ViewBag.Usuario
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                            <li><a class="dropdown-item" href="@Url.Action("Logout", "Account")"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
-                    </ul>
+
+    <li class="px-3 py-2">
+        <span class="fw-semibold text-muted">
+            👋 Hola, @User.Identity.Name
+        </span>
+    </li>
+
+    <li><hr class="dropdown-divider" /></li>
+
+    <li>
+        <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
+            <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+        </a>
+    </li>
+
+</ul>
                 </div>
             </div>
         </div>

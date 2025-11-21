@@ -42,8 +42,8 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light text-center">
                             <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Identidad</th>
+
+                                <th>Identidad Empleado</th>
                                 <th>Fecha Inicio</th>
                                 <th>Fecha Fin</th>
                                 <th>Horas Ordinarias</th>
@@ -61,7 +61,7 @@
                             @foreach (var registro in Model)
                             {
                                 <tr>
-                                    <td class="ps-4 fw-semibold">@registro.Id</td>
+                  
                                     <td>@registro.Identidad</td>
                                     <td>@registro.FechaInicio?.ToString("yyyy-MM-dd")</td>
                                     <td>@registro.FechaFin?.ToString("yyyy-MM-dd")</td>

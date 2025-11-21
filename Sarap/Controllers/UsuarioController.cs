@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Repository;
-using Sarap.Models;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Repository;
+using Sarap.Models;
 
 namespace Sarap.Controllers
 {
@@ -162,7 +164,7 @@ namespace Sarap.Controllers
         {
             return View();
         }
-
+        /*
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarCredenciales(CambiarCredencialesViewModel model)
@@ -211,6 +213,65 @@ namespace Sarap.Controllers
             var bytes = Encoding.UTF8.GetBytes(password);
             var hash = sha.ComputeHash(bytes);
             return Convert.ToBase64String(hash);
+        }
+        */
+        [HttpGet]
+        public IActionResult CambiarContraseña()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarContraseña(CambiarContraseñaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var username = User.Identity?.Name;
+            var usuarios = await _repository.ReadAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.NombreUsuario == username);
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "Usuario no encontrado.");
+                return View(model);
+            }
+
+            // Validar contraseña actual
+            if (!UsuarioRepository.VerifyPassword(model.ContraseñaActual, usuario.ContraseñaHash))
+            {
+                ModelState.AddModelError("ContraseñaActual", "La contraseña actual es incorrecta.");
+                return View(model);
+            }
+
+            // Actualizar contraseña
+            usuario.ContraseñaHash = UsuarioRepository.HashPassword(model.NuevaContraseña);
+
+            var actualizado = await _repository.UpdateAsync(usuario);
+            if (actualizado)
+            {
+                TempData["Mensaje"] = "Contraseña actualizada correctamente. Debe iniciar sesión nuevamente.";
+
+                // Cerrar sesión automáticamente para seguridad
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                return RedirectToAction("Login", "Account");
+            }
+
+            ModelState.AddModelError("", "No se pudo actualizar la contraseña.");
+            return View(model);
+        }
+
+        private string HashPassword(string password)
+        {
+            // Reutilizá tu método de hashing existente
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
         }
     }
 }

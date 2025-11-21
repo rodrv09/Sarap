@@ -10,7 +10,7 @@ namespace Sarap.Models
 
         [Required(ErrorMessage = "El correo es obligatorio.")]
         [EmailAddress(ErrorMessage = "Debe ingresar un correo electrónico válido.")]
-        [Display(Name = "Nuevo Correo Electrónico")]
+        [Display(Name = "Correo Electrónico")]
         public string NuevoEmail { get; set; } = null!;
 
         [Required(ErrorMessage = "Debe ingresar la contraseña actual.")]

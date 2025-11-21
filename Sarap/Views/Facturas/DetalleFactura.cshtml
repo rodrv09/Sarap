@@ -1,0 +1,122 @@
+﻿<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .factura-container {
+        max-width: 1100px; /* Más ancho para que no se corte */
+        margin: 2rem auto;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+        overflow-x: auto; /* Permite scroll horizontal si hace falta */
+    }
+
+    .factura-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+        .factura-header h2 {
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #222;
+        }
+
+    .factura-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+        .factura-info p {
+            margin: 0;
+        }
+
+    table.factura-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        min-width: 900px; /* Para que la tabla no se reduzca mucho */
+    }
+
+        table.factura-table th, table.factura-table td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 1rem;
+            white-space: nowrap; /* Evita que los textos hagan wrap y deformen filas */
+        }
+
+        table.factura-table th {
+            background-color: #f4f4f4;
+            font-weight: 600;
+            color: #555;
+        }
+
+        table.factura-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+    .total-section {
+        text-align: right;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #111;
+        border-top: 2px solid #444;
+        padding-top: 10px;
+    }
+</style>
+
+<div class="factura-container">
+    <div class="factura-header">
+        <h2>Factura No. @Model.Factura.FacturaID</h2>
+    </div>
+    <a asp-action="ExportarPdf" asp-route-facturaId="@Model.Factura.FacturaID" class="btn btn-primary">
+        Descargar PDF
+    </a>
+
+    <div class="factura-info">
+        <p><strong>Cliente:</strong> @Model.Factura.ClienteNombre</p>
+        <p><strong>Fecha:</strong> @Model.Factura.Fecha.ToShortDateString()</p>
+    </div>
+
+
+    <table class="factura-table">
+        <thead>
+            <tr>
+             
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Impuesto</th>
+                <th>Descuento</th>
+                <th>Total Línea</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detalle in Model.Detalles)
+            {
+                <tr>
+             
+                    <td>@detalle.NombreProducto</td>
+                    <td>@detalle.Cantidad</td>
+                    <td>@detalle.PrecioUnitario.ToString("C")</td>
+                    <td>@detalle.Subtotal.ToString("C")</td>
+                    <td>@(detalle.Impuesto?.ToString("P2") ?? "-")</td>
+                    <td>@(detalle.Descuento?.ToString("P2") ?? "-")</td>
+                    <td>@detalle.TotalLinea.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        Total: @Model.Factura.Total.ToString("C")
+    </div>
+</div>

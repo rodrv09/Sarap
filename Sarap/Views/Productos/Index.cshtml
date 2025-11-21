@@ -5,7 +5,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4 text-dark">Registro de Productos</h2>
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-user-cog me-2"></i>Gestión de Productos
+        </h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+            <i class="fas fa-plus-circle me-2"></i>Nuevo Producto
+        </button>
+    </div>
+
+
+
+
 
 @if (TempData["Mensaje"] != null)
 {
@@ -14,7 +26,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
 }
-
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -23,66 +34,98 @@
     </div>
 }
 
-<div class="mb-3">
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
-        <i class="fas fa-plus"></i> Agregar Producto
-    </button>
-</div>
 
-<div class="card shadow-sm" style="background: white;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover w-100 mb-0">
-                <thead style="background-color: #2f3e4e; color: white;">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Categoría</th>
-                        <th>Unidad Medida</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>ProveedorID</th>
-                        <th>Activo</th>
-                        <th>Stock Mínimo</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var producto in Model)
+ 
+
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="card-title mb-0"><i class="fas fa-list-alt me-2"></i>Productos</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Nombre</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Unidad</th>
+                            <th class="text-end">Cantidad</th>
+                            <th class="text-end">Precio</th>
+                            <th>Proveedor</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Stock Mín</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var producto in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-semibold">@producto.Nombre</td>
+                                    <td class="text-truncate" style="max-width: 200px;" title="@producto.Descripcion">
+                                        @producto.Descripcion
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info bg-opacity-10 text-info">@producto.Categoria</span>
+                                    </td>
+                                    <td>@producto.UnidadMedida</td>
+                                    <td class="text-end">@producto.Cantidad.ToString("N2")</td>
+                                    <td class="text-end">@producto.Precio.ToString("C")</td>
+                                    <td>@producto.ProveedorID</td>
+                                <td class="text-center">
+                                    @if (producto.Activo == true)
+                                    {
+                                        <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i>Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary rounded-pill"><i class="fas fa-times-circle me-1"></i>Inactivo</span>
+                                    }
+                                </td>
+                                    <td class="text-center">@producto.StockMinimo</td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-sm btn-outline-primary btnEditarProducto"
+                                                    data-producto='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(producto))'
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+
+                                        @if (producto.Activo == true)
+                                        {
+                                            <a class="btn btn-sm btn-outline-warning"
+                                               href="@Url.Action("Desactivar", "Productos", new { id = producto.ProductoID })"
+                                               title="Desactivar producto">
+                                                <i class="fas fa-toggle-on"></i> 
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-sm btn-outline-success"
+                                               href="@Url.Action("Activar", "Productos", new { id = producto.ProductoID })"
+                                               title="Activar producto">
+                                                <i class="fas fa-toggle-off"></i> 
+                                            </a>
+                                        }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@producto.Nombre</td>
-                                <td>@producto.Descripcion</td>
-                                <td>@producto.Categoria</td>
-                                <td>@producto.UnidadMedida</td>
-                                <td>@producto.Cantidad</td>
-                                <td>@producto.Precio.ToString("C")</td>
-                                <td>@producto.ProveedorID</td>
-                                <td>@(producto.Activo == true ? "Sí" : "No")</td>
-                                <td>@producto.StockMinimo</td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm btn-outline-warning me-1 btnEditarProducto"
-                                            data-producto='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(producto))'>
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
-                                    <a class="btn btn-sm btn-outline-danger"
-                                       href="@Url.Action("Eliminar", "Productos", new { id = producto.ProductoID })">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
+                                <td colspan="10" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>No hay productos registrados
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="10" class="text-center text-muted">No hay productos registrados.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -91,11 +134,13 @@
 <div class="modal fade" id="agregarProductoModal" tabindex="-1" aria-labelledby="agregarProductoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="agregarProductoModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Agregar Producto
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
             <form asp-action="Crear" asp-controller="Productos" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agregarProductoModalLabel">Agregar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="NombreCrear" class="form-label">Nombre</label>
@@ -107,7 +152,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="CategoriaCrear" class="form-label">Categoría</label>
-                        <select class="form-control" id="CategoriaCrear" name="Categoria" required>
+                        <select class="form-select" id="CategoriaCrear" name="Categoria" required>
                             <option value="">Seleccione una categoría</option>
                             @foreach (var categoria in ViewBag.Categorias)
                             {
@@ -135,7 +180,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="PrecioCrear" class="form-label">Precio</label>
-                        <input type="number" step="0.01" class="form-control" id="PrecioCrear" name="Precio" required />
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" class="form-control" id="PrecioCrear" name="Precio" required />
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="ProveedorIDCrear" class="form-label">Proveedor</label>
@@ -148,18 +196,19 @@
                         </select>
                     </div>
 
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="ActivoCrear" name="Activo" checked />
-                        <label class="form-check-label" for="ActivoCrear">Activo</label>
-                    </div>
+                   
                     <div class="mb-3">
                         <label for="StockMinimoCrear" class="form-label">Stock Mínimo</label>
                         <input type="number" class="form-control" id="StockMinimoCrear" name="StockMinimo" />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Agregar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Agregar
+                    </button>
                 </div>
             </form>
         </div>
@@ -170,54 +219,95 @@
 <div class="modal fade" id="editarProductoModal" tabindex="-1" aria-labelledby="editarProductoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editarProductoModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Producto
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
             <form asp-action="Editar" asp-controller="Productos" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarProductoModalLabel">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
                 <div class="modal-body">
+
                     <input type="hidden" id="ProductoID" name="ProductoID" />
+
                     <div class="mb-3">
-                        <label for="Nombre" class="form-label">Nombre</label>
+                        <label class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="Nombre" name="Nombre" required />
                     </div>
+
                     <div class="mb-3">
-                        <label for="Descripcion" class="form-label">Descripción</label>
+                        <label class="form-label">Descripción</label>
                         <input type="text" class="form-control" id="Descripcion" name="Descripcion" />
                     </div>
+
                     <div class="mb-3">
-                        <label for="Categoria" class="form-label">Categoría</label>
-                        <input type="text" class="form-control" id="Categoria" name="Categoria" />
+                        <label class="form-label">Categoría</label>
+                        <select class="form-select" id="Categoria" name="Categoria" required>
+                            <option value="">Seleccione una categoría</option>
+                            @foreach (var categoria in ViewBag.Categorias)
+                            {
+                                <option value="@categoria.Nombre">@categoria.Nombre</option>
+                            }
+                        </select>
                     </div>
+
                     <div class="mb-3">
-                        <label for="UnidadMedida" class="form-label">Unidad Medida</label>
-                        <input type="text" class="form-control" id="UnidadMedida" name="UnidadMedida" />
+                        <label class="form-label">Unidad de Medida</label>
+                        <select class="form-select" id="UnidadMedida" name="UnidadMedida" required>
+                            <option value="">Seleccione una unidad</option>
+                            <option value="Gramos">Gramos</option>
+                            <option value="Kilogramos">Kilogramos</option>
+                            <option value="Litros">Litros</option>
+                            <option value="Mililitros">Mililitros</option>
+                            <option value="Unidades">Unidades</option>
+                            <option value="Caja">Caja</option>
+                            <option value="Saco">Saco</option>
+                        </select>
                     </div>
+
                     <div class="mb-3">
-                        <label for="Cantidad" class="form-label">Cantidad</label>
+                        <label class="form-label">Cantidad</label>
                         <input type="number" step="0.01" class="form-control" id="Cantidad" name="Cantidad" required />
                     </div>
+
                     <div class="mb-3">
-                        <label for="Precio" class="form-label">Precio</label>
-                        <input type="number" step="0.01" class="form-control" id="Precio" name="Precio" required />
+                        <label class="form-label">Precio</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" class="form-control" id="Precio" name="Precio" required />
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="ProveedorID" class="form-label">Proveedor ID</label>
-                        <input type="number" class="form-control" id="ProveedorID" name="ProveedorID" />
+                        <label class="form-label">Proveedor</label>
+                        <select class="form-select" id="ProveedorID" name="ProveedorID" required>
+                            <option value="">Seleccione un proveedor</option>
+                            @foreach (var proveedor in ViewBag.Proveedores)
+                            {
+                                <option value="@proveedor.ProveedorId">@proveedor.NombreEmpresa</option>
+                            }
+                        </select>
                     </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="Activo" name="Activo" />
-                        <label class="form-check-label" for="Activo">Activo</label>
-                    </div>
+
+                 
+
                     <div class="mb-3">
-                        <label for="StockMinimo" class="form-label">Stock Mínimo</label>
+                        <label class="form-label">Stock Mínimo</label>
                         <input type="number" class="form-control" id="StockMinimo" name="StockMinimo" />
                     </div>
+
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Guardar
+                    </button>
                 </div>
+
             </form>
         </div>
     </div>
@@ -240,7 +330,7 @@
                     document.getElementById('Cantidad').value = producto.Cantidad ?? '';
                     document.getElementById('Precio').value = producto.Precio ?? '';
                     document.getElementById('ProveedorID').value = producto.ProveedorID ?? '';
-                    document.getElementById('Activo').checked = producto.Activo === true;
+
                     document.getElementById('StockMinimo').value = producto.StockMinimo ?? '';
 
                     modalEditar.show();

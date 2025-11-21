@@ -2,7 +2,7 @@
 
 namespace Sarap.Models
 {
-    [Table("FacturaDetalle")]
+    [Table("FacturaDetalles")]
 
     public class FacturaDetalle
     {

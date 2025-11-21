@@ -29,23 +29,27 @@ namespace Repository
 
             if (cantidadDias <= 0) return false;
 
-            // Si DiasDisponibles es null, consideramos 0 para evitar excepción
             int disponible = vacacion.DiasDisponibles ?? 0;
             int usados = vacacion.DiasUsados ?? 0;
 
-            if (disponible < cantidadDias) return false;
+            if (disponible < cantidadDias)
+            {
+                // Lanzar excepción específica para manejar en el controlador
+                throw new InvalidOperationException("Días insuficientes disponibles");
+            }
 
             vacacion.DiasDisponibles = disponible - cantidadDias;
             vacacion.DiasUsados = usados + cantidadDias;
+            vacacion.FechaUltimaActualizacion = DateTime.Now;
 
             try
             {
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (DbUpdateException ex)
             {
-                // Puedes loguear el error aquí
+                // Loggear error
                 return false;
             }
         }

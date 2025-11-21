@@ -5,105 +5,108 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4 text-dark">Planillas Colones</h2>
-
-@if (TempData["Mensaje"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Mensaje"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+<div class="container-fluid px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-primary">
+            <i class="fas fa-file-invoice-dollar me-2"></i>Planillas Colones
+        </h2>
     </div>
-}
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="mb-3">
-</div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-<div class="card shadow-sm" style="background: white;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover w-100 mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Identidad</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Horas Ordinarias</th>
-                        <th>Salario Ordinario</th>
-                        <th>Horas Incapacidad</th>
-                        <th>Salario Incapacidad</th>
-                        <th>Horas Vacaciones</th>
-                        <th>Salario Vacaciones</th>
-                        <th>Horas Feriado Ley</th>
-                        <th>Salario Feriado</th>
-                        <th>Horas Extra 15%</th>
-                        <th>Salario Extra 15%</th>
-                        <th>Horas Extra 20%</th>
-                        <th>Salario Extra 20%</th>
-                        <th>Horas Permiso Sin Goce</th>
-                        <th>Salario Bruto</th>
-                        <th>Deducción CCSS</th>
-                        <th>Salario Neto</th>
-                        <th>Fecha Registro</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var planilla in Model)
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-3">Identidad</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th class="text-end">Horas Ord.</th>
+                            <th class="text-end">Sal. Ord.</th>
+                            <th class="text-end">Horas Inc.</th>
+                            <th class="text-end">Sal. Inc.</th>
+                            <th class="text-end">Horas Vac.</th>
+                            <th class="text-end">Sal. Vac.</th>
+                            <th class="text-end">Horas Fer.</th>
+                            <th class="text-end">Sal. Fer.</th>
+                            <th class="text-end">H. Extra 15%</th>
+                            <th class="text-end">Sal. 15%</th>
+                            <th class="text-end">H. Extra 20%</th>
+                            <th class="text-end">Sal. 20%</th>
+                            <th class="text-end">Horas PSG</th>
+                            <th class="text-end fw-semibold">Bruto</th>
+                            <th class="text-end">CCSS</th>
+                            <th class="text-end fw-semibold">Neto</th>
+                            <th>Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var planilla in Model)
+                            {
+                                <tr>
+                                    <td class="ps-3">@planilla.Identidad</td>
+                                    <td>@planilla.FechaInicio.ToString("dd/MM/yy")</td>
+                                    <td>@planilla.FechaFin.ToString("dd/MM/yy")</td>
+
+                                    <td class="text-end">@(planilla.HorasOrdinarias.HasValue? planilla.HorasOrdinarias.Value.ToString("N2") : "0.00")</td>
+                                    <td class="text-end">@planilla.SalarioOrdinario.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasIncapacidad.ToString("N2")</td>
+                                    <td class="text-end">@planilla.SalarioIncapacidad.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasVacaciones.ToString("N2")</td>
+                                    <td class="text-end">@planilla.SalarioVacaciones.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasFeriadoLey.ToString("N2")</td>
+                                    <td class="text-end">@planilla.SalarioFeriado.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasExtra15.ToString("N2")</td>
+                                    <td class="text-end">@planilla.SalarioExtra15.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasExtra20.ToString("N2")</td>
+                                    <td class="text-end">@planilla.SalarioExtra20.ToString("N2")</td>
+
+                                    <td class="text-end">@planilla.HorasPermisoSinGoce.ToString("N2")</td>
+
+                                    <td class="text-end fw-semibold text-success">@planilla.SalarioBruto.ToString("N2")</td>
+                                    <td class="text-end text-danger">@planilla.DeduccionCCSS.ToString("N2")</td>
+                                    <td class="text-end fw-semibold text-primary">@planilla.SalarioNeto.ToString("N2")</td>
+
+                                    <td>@(planilla.FechaRegistro.HasValue? planilla.FechaRegistro.Value.ToString("dd/MM/yy HH:mm") : "")</td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@planilla.Identidad</td>
-                                <td>@planilla.FechaInicio.ToString("yyyy-MM-dd")</td>
-                                <td>@planilla.FechaFin.ToString("yyyy-MM-dd")</td>
-
-                                <td>@(planilla.HorasOrdinarias.HasValue ? planilla.HorasOrdinarias.Value.ToString("N2") : "0.00")</td>
-                                <td>@planilla.SalarioOrdinario.ToString("N2")</td>
-
-                                <td>@planilla.HorasIncapacidad.ToString("N2")</td>
-                                <td>@planilla.SalarioIncapacidad.ToString("N2")</td>
-
-                                <td>@planilla.HorasVacaciones.ToString("N2")</td>
-                                <td>@planilla.SalarioVacaciones.ToString("N2")</td>
-
-                                <td>@planilla.HorasFeriadoLey.ToString("N2")</td>
-                                <td>@planilla.SalarioFeriado.ToString("N2")</td>
-
-                                <td>@planilla.HorasExtra15.ToString("N2")</td>
-                                <td>@planilla.SalarioExtra15.ToString("N2")</td>
-
-                                <td>@planilla.HorasExtra20.ToString("N2")</td>
-                                <td>@planilla.SalarioExtra20.ToString("N2")</td>
-
-                                <td>@planilla.HorasPermisoSinGoce.ToString("N2")</td>
-
-                                <td>@planilla.SalarioBruto.ToString("N2")</td>
-                                <td>@planilla.DeduccionCCSS.ToString("N2")</td>
-                                <td>@planilla.SalarioNeto.ToString("N2")</td>
-
-                                <td>@(planilla.FechaRegistro.HasValue ? planilla.FechaRegistro.Value.ToString("yyyy-MM-dd HH:mm") : "")</td>
-
-                             
+                                <td colspan="20" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>No hay registros de planillas
+                                </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="21" class="text-center text-muted">No hay registros de planillas.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

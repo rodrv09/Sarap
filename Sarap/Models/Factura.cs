@@ -23,6 +23,7 @@
         public string? Usuario { get; set; }  // Nullable
 
         public string? Observaciones { get; set; }  // nvarchar(max), nullable
+
     }
 
 }

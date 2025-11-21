@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Sarap.Models;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services.AddTransient<ClienteRepository>();
 builder.Services.AddTransient<ProveedorRepository>();
 builder.Services.AddTransient<UsuarioRepository>();
 builder.Services.AddTransient<EmpleadoRepository>();
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
 
 builder.Services.AddDbContext<EspeciasSarapiquiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

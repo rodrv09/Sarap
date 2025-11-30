@@ -1,0 +1,37 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - espsarapiqui
+
+on:
+  push:
+    branches:
+      - master         # si tu rama principal es otra, cámbiala aquí
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      # Compilar SOLO el proyecto web Sarap
+      - name: Build
+        run: dotnet build ./Sarap/Sarap.csproj --configuration Release
+
+      # Publicar Sarap en la carpeta ./publish
+      - name: Publish
+        run: dotnet publish ./Sarap/Sarap.csproj -c Release -o ./publish
+
+      # Desplegar a Azure usando el publish profile
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'espsarapiqui'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish

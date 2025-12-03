@@ -76,9 +76,7 @@
     <div class="factura-header">
         <h2>Factura No. @Model.Factura.FacturaID</h2>
     </div>
-    <a asp-action="ExportarPdf" asp-route-facturaId="@Model.Factura.FacturaID" class="btn btn-primary">
-        Descargar PDF
-    </a>
+
 
     <div class="factura-info">
         <p><strong>Cliente:</strong> @Model.Factura.ClienteNombre</p>

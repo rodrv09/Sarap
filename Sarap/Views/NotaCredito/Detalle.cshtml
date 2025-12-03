@@ -81,3 +81,14 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Si estamos en la ruta /NotaCredito/Imprimir, dispara automáticamente el diálogo de impresión
+        if (window.location.pathname.toLowerCase().includes("/notacredito/imprimir")) {
+            window.onload = function () {
+                window.print();
+            };
+        }
+    </script>
+}

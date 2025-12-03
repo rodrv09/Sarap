@@ -1,0 +1,45 @@
+@model Sarap.Models.NotaCredito
+
+@{
+    ViewBag.Title = "Eliminar Nota de Crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>Eliminar Nota de Crédito
+    </h2>
+
+    <div class="alert alert-warning mt-3">
+        <strong>¿Está seguro que desea eliminar esta nota?</strong><br />
+        Esta acción no se puede deshacer.
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">ID Nota:</dt>
+        <dd class="col-sm-9">@Model.NotaCreditoID</dd>
+
+        <dt class="col-sm-3">Factura:</dt>
+        <dd class="col-sm-9">#@Model.FacturaID</dd>
+
+        <dt class="col-sm-3">Monto:</dt>
+        <dd class="col-sm-9">@Model.Monto.ToString("C")</dd>
+
+        <dt class="col-sm-3">Motivo:</dt>
+        <dd class="col-sm-9">@Model.Motivo</dd>
+
+        <dt class="col-sm-3">Fecha:</dt>
+        <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy HH:mm")</dd>
+    </dl>
+
+    <form asp-action="EliminarConfirmado" method="post">
+        <input type="hidden" name="id" value="@Model.NotaCreditoID" />
+
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash me-2"></i>Eliminar
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+
+</div>

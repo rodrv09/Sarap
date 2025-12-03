@@ -1,7 +1,7 @@
-﻿@model Sarap.Models.FacturaViewModel
+﻿@model Sarap.Models.NotaCredito
 
 @{
-    ViewBag.Title = "Crear Factura";
+    ViewBag.Title = "Crear Nota de Crédito";
 }
 
 <style>
@@ -10,8 +10,8 @@
         color: #333;
     }
 
-    .factura-container {
-        max-width: 900px;
+    .nota-container {
+        max-width: 700px;
         margin: 2rem auto;
         padding: 2rem;
         border: 1px solid #ccc;
@@ -20,22 +20,22 @@
         box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
     }
 
-    .factura-header {
+    .nota-header {
         text-align: center;
         margin-bottom: 2rem;
     }
 
-        .factura-header h2 {
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #222;
-        }
+    .nota-header h2 {
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #222;
+    }
 
     label {
         font-weight: 600;
     }
 
-    .form-control, .form-select {
+    .form-control {
         padding: 0.5rem;
         font-size: 1rem;
     }
@@ -45,193 +45,80 @@
         margin-right: 0.5rem;
     }
 
-    table {
-        margin-top: 1rem;
+    .resumen-factura p {
+        margin: 0 0 0.3rem 0;
+    }
+
+    .alert-warning {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
     }
 </style>
 
-<div class="factura-container">
-    <div class="factura-header">
-        <h2>Crear Factura</h2>
+<div class="nota-container">
+    <div class="nota-header">
+        <h2>Crear Nota de Crédito</h2>
     </div>
 
-    <form method="post" asp-action="CrearFactura">
-        <!-- Fecha y Cliente -->
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label asp-for="Factura.Fecha">Fecha:</label>
-                <input type="date" class="form-control" asp-for="Factura.Fecha" />
-                <span asp-validation-for="Factura.Fecha" class="text-danger"></span>
-            </div>
+    <div class="resumen-factura mb-4">
+        <p><strong>Factura No.:</strong> @ViewBag.FacturaNumero</p>
+        <p><strong>Cliente:</strong> @ViewBag.FacturaCliente</p>
+        <p><strong>Total factura:</strong> @ViewBag.FacturaTotal</p>
 
-            <div class="col-md-8">
-                <label asp-for="Factura.ClienteIdentidad">Cliente:</label>
-                <select class="form-select" asp-for="Factura.ClienteIdentidad" asp-items="Model.ClientesSelectList">
-                    <option value="">-- Seleccione un cliente --</option>
-                </select>
-                <span asp-validation-for="Factura.ClienteIdentidad" class="text-danger"></span>
-            </div>
-        </div>
-
-        <hr />
-
-        <!-- Agregar Producto -->
-        <h4>Agregar Producto</h4>
-        <div class="row mb-3 align-items-end">
-            <div class="col-md-6">
-                <label>Producto:</label>
-                <select class="form-select" asp-for="NuevoDetalle.ProductoID" asp-items="Model.ProductosSelectList">
-                    <option value="">-- Seleccione un producto --</option>
-                </select>
-                <span asp-validation-for="NuevoDetalle.ProductoID" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-3">
-                <label>Cantidad:</label>
-                <input type="number" min="1" class="form-control" asp-for="NuevoDetalle.Cantidad" />
-                <span asp-validation-for="NuevoDetalle.Cantidad" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-3">
-                <button type="submit" name="accion" value="AgregarProducto" class="btn btn-primary">Agregar producto</button>
-            </div>
-        </div>
-
-        @if (Model.FacturaDetalles != null && Model.FacturaDetalles.Any())
+        @* Mostrar saldo disponible si el controlador lo envió *@
+        @if (ViewBag.SaldoDisponible != null)
         {
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio unitario</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal línea</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var detalle in Model.FacturaDetalles)
-                    {
-                        <tr>
-                            <td>@detalle.NombreProducto</td>
-                            <td class="precio-unitario">@detalle.PrecioUnitario.ToString("F2")</td>
-                            <td class="cantidad">@detalle.Cantidad</td>
-                            <td class="subtotal-linea"></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <p class="text-success fw-bold">
+                <strong>Saldo disponible para notas de crédito:</strong> 
+                @String.Format("{0:C}", ViewBag.SaldoDisponible)
+            </p>
         }
-        else
-        {
-            <p>No hay productos agregados.</p>
-        }
+    </div>
 
-        <!-- Totales -->
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <label>Subtotal:</label>
-                <div><strong id="subtotal">₡0.00</strong></div>
-                <input type="hidden" name="Factura.Subtotal" id="input-subtotal" />
-            </div>
+    @* Mostrar errores generales *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-warning">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
 
-            <div class="col-md-3">
-                <label>Descuento (%):</label>
-                <input type="number" id="descuentoInput" name="Factura.Descuento" min="0" max="100" step="0.01" class="form-control" value="@(Model.Factura.Descuento ?? 0)" />
-                <span asp-validation-for="Factura.Descuento" class="text-danger"></span>
-            </div>
+    <form asp-action="CrearNotaCredito" method="post">
 
-            <div class="col-md-3">
-                <label>Impuesto:</label>
-                <select id="impuestoSelect" name="Factura.Impuesto" class="form-select">
-                    <option value="0" selected="@(Model.Factura.Impuesto == 0.00m ? "selected" : null)">0%</option>
-                    <option value="0.2" selected="@(Model.Factura.Impuesto == 0.2m ? "selected" : null)">2%</option>
-                    <option value="0.13" selected="@(Model.Factura.Impuesto == 0.13m ? "selected" : null)">13%</option>
-                </select>
-                <span asp-validation-for="Factura.Impuesto" class="text-danger"></span>
-            </div>
+        <input type="hidden" asp-for="FacturaID" />
 
-            <div class="col-md-3">
-                <label>Total:</label>
-                <div><strong id="total">₡0.00</strong></div>
-                <input type="hidden" name="Factura.Total" id="input-total" />
-            </div>
+        <div class="mb-3">
+            <label asp-for="Fecha" class="form-label"></label>
+            <input asp-for="Fecha" class="form-control" />
+            <span asp-validation-for="Fecha" class="text-danger"></span>
         </div>
 
-        <!-- Tipo de Pago -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label asp-for="Factura.TipoPago">Tipo de Pago:</label>
-                <select class="form-select" asp-for="Factura.TipoPago">
-                    <option value="">-- Seleccione un tipo de pago --</option>
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Tarjeta">Tarjeta</option>
-                    <option value="Transferencia">Transferencia</option>
-                </select>
-                <span asp-validation-for="Factura.TipoPago" class="text-danger"></span>
-            </div>
+        <div class="mb-3">
+            <label asp-for="Monto" class="form-label"></label>
+            <input asp-for="Monto" class="form-control" />
+            <span asp-validation-for="Monto" class="text-danger"></span>
         </div>
 
-        <button type="submit" name="accion" value="FinalizarFactura" class="btn btn-success">Finalizar factura</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        <div class="mb-3">
+            <label asp-for="Motivo" class="form-label"></label>
+            <textarea asp-for="Motivo" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Motivo" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Guardar nota
+        </button>
+
+        <a asp-controller="NotaCredito" asp-action="Index" class="btn btn-secondary">
+            Cancelar
+        </a>
     </form>
 </div>
 
 @section Scripts {
-    <script>
-        function actualizarTotales() {
-            const subtotalElement = document.getElementById('subtotal');
-            const totalElement = document.getElementById('total');
-            const inputSubtotal = document.getElementById('input-subtotal');
-            const inputTotal = document.getElementById('input-total');
-
-            const descuentoInput = document.getElementById('descuentoInput');
-            const impuestoSelect = document.getElementById('impuestoSelect');
-
-            const filas = document.querySelectorAll('table tbody tr');
-            let subtotal = 0;
-
-            filas.forEach(fila => {
-                const precioStr = fila.querySelector('.precio-unitario')?.innerText || "0";
-                const cantidadStr = fila.querySelector('.cantidad')?.innerText || "0";
-
-                const precio = parseFloat(precioStr.replace(/[^0-9,-]+/g, "").replace(",", ".")) || 0;
-                const cantidad = parseFloat(cantidadStr.replace(",", ".")) || 0;
-
-                const subtotalLinea = precio * cantidad;
-
-                const celdaSubtotalLinea = fila.querySelector('.subtotal-linea');
-                if (celdaSubtotalLinea) {
-                    celdaSubtotalLinea.innerText = subtotalLinea.toLocaleString("es-CR", { style: 'currency', currency: 'CRC' });
-                }
-
-                subtotal += subtotalLinea;
-            });
-
-            const descuento = parseFloat(descuentoInput.value.replace(",", ".")) || 0;
-            const impuesto = parseFloat(impuestoSelect.value) || 0;
-
-            const montoDescuento = subtotal * (descuento / 100);
-            const baseImponible = subtotal - montoDescuento;
-            const total = baseImponible + (baseImponible * impuesto);
-
-            subtotalElement.innerText = subtotal.toLocaleString("es-CR", { style: "currency", currency: "CRC" });
-            totalElement.innerText = total.toLocaleString("es-CR", { style: "currency", currency: "CRC" });
-
-            inputSubtotal.value = subtotal.toFixed(2);
-            inputTotal.value = total.toFixed(2);
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            actualizarTotales();
-
-            document.getElementById('descuentoInput').addEventListener('input', actualizarTotales);
-            document.getElementById('impuestoSelect').addEventListener('change', actualizarTotales);
-
-            document.querySelector('form').addEventListener('submit', function () {
-                actualizarTotales();
-            });
-        });
-    </script>
-
     <partial name="_ValidationScriptsPartial" />
 }

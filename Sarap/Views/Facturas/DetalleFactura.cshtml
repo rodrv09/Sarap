@@ -1,18 +1,26 @@
-﻿<style>
+﻿@model Sarap.Models.FacturaDetalleViewModel
+
+@{
+    ViewBag.Title = "Detalle Factura";
+}
+
+<style>
+    /* ---- Estilos normales (pantalla) ---- */
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #333;
     }
 
     .factura-container {
-        max-width: 1100px; /* Más ancho para que no se corte */
+        max-width: 1100px;
         margin: 2rem auto;
         padding: 2rem;
         border: 1px solid #ccc;
         border-radius: 8px;
         background-color: #fff;
         box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
-        overflow-x: auto; /* Permite scroll horizontal si hace falta */
+        overflow-x: auto;
+        position: relative;
     }
 
     .factura-header {
@@ -20,11 +28,11 @@
         margin-bottom: 2rem;
     }
 
-        .factura-header h2 {
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #222;
-        }
+    .factura-header h2 {
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #222;
+    }
 
     .factura-info {
         display: flex;
@@ -33,34 +41,35 @@
         font-size: 1.1rem;
     }
 
-        .factura-info p {
-            margin: 0;
-        }
+    .factura-info p {
+        margin: 0;
+    }
 
     table.factura-table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 2rem;
-        min-width: 900px; /* Para que la tabla no se reduzca mucho */
+        min-width: 900px;
     }
 
-        table.factura-table th, table.factura-table td {
-            border: 1px solid #ddd;
-            padding: 12px 15px;
-            text-align: center;
-            font-size: 1rem;
-            white-space: nowrap; /* Evita que los textos hagan wrap y deformen filas */
-        }
+    table.factura-table th,
+    table.factura-table td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: center;
+        font-size: 1rem;
+        white-space: nowrap;
+    }
 
-        table.factura-table th {
-            background-color: #f4f4f4;
-            font-weight: 600;
-            color: #555;
-        }
+    table.factura-table th {
+        background-color: #f4f4f4;
+        font-weight: 600;
+        color: #555;
+    }
 
-        table.factura-table tbody tr:nth-child(even) {
-            background-color: #fafafa;
-        }
+    table.factura-table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
 
     .total-section {
         text-align: right;
@@ -70,24 +79,72 @@
         border-top: 2px solid #444;
         padding-top: 10px;
     }
+
+    /* ---- Botón imprimir en esquina superior derecha ---- */
+    .imprimir-btn {
+        position: absolute;
+        right: 2rem;
+        top: 1rem;
+    }
+
+    /* ---- Vista de impresión ---- */
+    @@media print {
+
+        /* Ocultar menú lateral, header y footer del layout */
+        #layout-sidenav,
+        .navbar,
+        .sidebar,
+        .app-sidebar,
+        .app-navbar,
+        footer,
+        .btn,
+        .imprimir-btn {
+            display: none !important;
+        }
+
+        /* Dejar solo el contenido de la factura */
+        body * {
+            visibility: hidden;
+        }
+
+        .factura-container,
+        .factura-container * {
+            visibility: visible;
+        }
+
+        .factura-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
 </style>
 
 <div class="factura-container">
+
+    <!-- Botón imprimir a la derecha -->
+    <a asp-action="ImprimirFactura"
+       asp-route-facturaId="@Model.Factura.FacturaID"
+       target="_blank"
+       class="btn btn-outline-primary imprimir-btn">
+        <i class="fas fa-print me-2"></i>Imprimir
+    </a>
+
     <div class="factura-header">
         <h2>Factura No. @Model.Factura.FacturaID</h2>
     </div>
-
 
     <div class="factura-info">
         <p><strong>Cliente:</strong> @Model.Factura.ClienteNombre</p>
         <p><strong>Fecha:</strong> @Model.Factura.Fecha.ToShortDateString()</p>
     </div>
 
-
     <table class="factura-table">
         <thead>
             <tr>
-             
                 <th>Producto</th>
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
@@ -101,7 +158,6 @@
             @foreach (var detalle in Model.Detalles)
             {
                 <tr>
-             
                     <td>@detalle.NombreProducto</td>
                     <td>@detalle.Cantidad</td>
                     <td>@detalle.PrecioUnitario.ToString("C")</td>
@@ -118,3 +174,14 @@
         Total: @Model.Factura.Total.ToString("C")
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Si es /Facturas/ImprimirFactura, imprime automáticamente
+        if (window.location.pathname.toLowerCase().includes("/facturas/imprimirfactura")) {
+            window.onload = function () {
+                window.print();
+            };
+        }
+    </script>
+}

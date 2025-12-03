@@ -173,6 +173,7 @@ namespace Sarap.Controllers
                     Text = c.Nombre + " " + c.Apellido
                 }).ToList();
         }
+
         // GET: Facturas/CrearNotaCredito/5
         public IActionResult CrearNotaCredito(int facturaId)
         {
@@ -212,7 +213,8 @@ namespace Sarap.Controllers
 
             if (model.Monto <= 0 || model.Monto > factura.Total)
             {
-                ModelState.AddModelError("Monto", "El monto debe ser mayor que cero y menor o igual al total de la factura.");
+                ModelState.AddModelError("Monto",
+                    "El monto debe ser mayor que cero y menor o igual al total de la factura.");
                 return View(model);
             }
 
@@ -225,6 +227,7 @@ namespace Sarap.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         public IActionResult DetalleFactura(int facturaId)
         {
             var factura = _context.Facturas
@@ -379,28 +382,34 @@ namespace Sarap.Controllers
             return sb.ToString();
         }
 
-        public IActionResult ExportarPdf(int facturaId)
+        // GET: Facturas/ImprimirFactura/{facturaId}
+        public IActionResult ImprimirFactura(int facturaId)
         {
-            var factura = _context.Facturas.FirstOrDefault(f => f.FacturaID == facturaId);
+            var factura = _context.Facturas
+                .FirstOrDefault(f => f.FacturaID == facturaId);
+
             if (factura == null)
+            {
                 return NotFound();
+            }
 
-            var detalles = _context.FacturaDetalles.Where(d => d.FacturaID == facturaId).ToList();
+            var detalles = _context.FacturaDetalles
+                .Where(d => d.FacturaID == facturaId)
+                .ToList();
 
-            // Obtener URL base (ejemplo para localhost)
-            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var viewModel = new FacturaDetalleViewModel
+            {
+                Factura = factura,
+                Detalles = detalles
+            };
 
-            var htmlContent = GenerarHtmlFactura(factura, detalles, baseUrl);
-
-            var pdf = new HtmlToPdf();
-            var doc = pdf.ConvertHtmlString(htmlContent);
-
-            return File(doc.Save(), "application/pdf", $"Factura_{factura.FacturaID}.pdf");
+            // Reutilizamos la misma vista que DetalleFactura
+            return View("DetalleFactura", viewModel);
         }
 
+    
 
 
-
-    }
+}
 
 }
